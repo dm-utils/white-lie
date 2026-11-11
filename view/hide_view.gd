@@ -34,6 +34,8 @@ var _labels := {}
 var _dark: ColorRect
 var controls := "keys" # keys | mouse | touch
 var touch: TouchControls
+var _gadget_pending := false
+var _gadget_btn: Button
 var rb: Rollback # online: the rollback driving the session
 var net: OnlineClient # online: the room connection
 var _online_started := false
@@ -205,7 +207,25 @@ func _command() -> Dictionary:
 	if target != Vector2i(-1, -1):
 		cmd.a = Fx.atan2_a(target.y - me.y, target.x - me.x)
 		cmd["sd"] = Fx.dist(target.x - me.x, target.y - me.y)
+	if _gadget_pending:
+		_gadget_pending = false
+		# aim: the mouse if there is one, else the way you face; the decoy lands 6 tiles out
+		var aim := me.aim
+		var dist := 6000
+		if controls == "mouse" or (controls == "keys" and get_viewport().get_mouse_position() != Vector2.ZERO):
+			var w := get_global_mouse_position() / PX
+			aim = Fx.atan2_a(int(w.y) - me.y, int(w.x) - me.x)
+			dist = Fx.dist(int(w.x) - me.x, int(w.y) - me.y)
+		cmd.s = aim
+		cmd["sd"] = dist
 	return cmd
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_SHIFT:
+		_gadget_pending = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		_gadget_pending = true
 
 
 func _nearest_thing(me: HideSim.Ent) -> Vector2i:
@@ -246,6 +266,10 @@ func _handle_events() -> void:
 					_say(tr("HIDE_YOU_FOUND"), 1.8)
 				elif int(ev.by) == m.human:
 					_say(tr("HIDE_GOT_ONE"), 1.4)
+			"gadget":
+				if int(ev.id) == m.human:
+					Sfx.play("plop")
+					_say(tr("HIDE_GADGET_DECOY_USED") if str(ev.kind) == "decoy" else tr("HIDE_GADGET_SPYGLASS_USED"), 1.4)
 			"miss":
 				if int(ev.id) == m.human:
 					Sfx.play("hit")
@@ -397,6 +421,18 @@ func _build_hud() -> void:
 		hud.add_child(touch)
 		touch.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		hud.move_child(touch, 1) # above the dark screen, below the labels
+	_gadget_btn = Button.new()
+	_gadget_btn.focus_mode = Control.FOCUS_NONE
+	_gadget_btn.custom_minimum_size = Vector2(240, 100)
+	_gadget_btn.pressed.connect(func() -> void: _gadget_pending = true)
+	hud.add_child(_gadget_btn)
+	_gadget_btn.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	_gadget_btn.offset_left = -300
+	_gadget_btn.offset_right = -60
+	_gadget_btn.offset_top = -160 - (2.0 * TouchControls.ATTACK_RADIUS + 60.0 if touch != null else 0.0)
+	_gadget_btn.offset_bottom = -60 - (2.0 * TouchControls.ATTACK_RADIUS + 60.0 if touch != null else 0.0)
+	if touch != null:
+		touch.blocked.append(_gadget_btn)
 	var hint := Label.new()
 	hint.text = tr("HIDE_CONTROLS_TOUCH") if controls == "touch" else tr("HIDE_CONTROLS_KEYS")
 	if controls == "touch":
@@ -420,6 +456,10 @@ func _update_hud() -> void:
 	_labels.points.text = tr("HIDE_POINTS").format({"points": me.points})
 	_labels.msg.text = _msg
 	_labels.msg.modulate.a = clampf(_msg_t * 2.0, 0.0, 1.0)
+	var gname := tr("HIDE_GADGET_DECOY") if me.role == HideSim.HIDER else tr("HIDE_GADGET_SPYGLASS")
+	_gadget_btn.visible = me.role != HideSim.GULL
+	_gadget_btn.text = gname if me.gadget == 0 else tr("HIDE_GADGET_USED")
+	_gadget_btn.disabled = me.gadget == 1 or s.phase != HideSim.PHASE_SEEK
 	# seekers wait in the dark while the others hide
 	_dark.visible = s.phase == HideSim.PHASE_HIDE and me.role == HideSim.SEEKER
 	if _dark.visible:

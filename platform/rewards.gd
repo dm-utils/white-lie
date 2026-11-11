@@ -8,8 +8,8 @@ extends RefCounted
 static func grant(profile: Dictionary, rew: Dictionary) -> void:
 	var id := str(rew.get("id", ""))
 	match str(rew.get("kind", "")):
-		"animal":
-			_add(profile, "unlocked_animals", id)
+		"character":
+			_add(profile, "unlocked_characters", id)
 		"look":
 			var looks: Dictionary = profile.get("looks", {})
 			var owned: Array = looks.get("owned", [])

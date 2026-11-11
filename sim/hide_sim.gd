@@ -15,7 +15,7 @@ const PHASE_SEEK := 1
 const PHASE_REVEAL := 2
 const WALLS := [0, 5] # sea, building
 const ENT_FIELDS := ["id", "animal_idx", "x", "y", "role", "disguise", "still", "moved", "dizzy", "cooldown",
-	"found_tick", "found_by", "points", "aim", "is_bot", "goal_x", "goal_y", "next_think", "target"]
+	"found_tick", "found_by", "points", "aim", "is_bot", "goal_x", "goal_y", "next_think", "target", "gadget", "spyglass"]
 const TELL_FIELDS := ["kind", "x", "y", "until"] # kind 0 footprint, 1 ripple, 2 noise
 
 static var _rules: Dictionary
@@ -35,6 +35,8 @@ class Ent:
 	var moved := 0 # distance moved since the last footprint/ripple
 	var dizzy := 0
 	var cooldown := 0
+	var gadget := 0 # 1 = this round's gadget is used (decoy for hiders, spyglass for seekers)
+	var spyglass := 0 # seekers: ticks the spyglass still works
 	var found_tick := -1
 	var found_by := -1
 	var points := 0
@@ -206,6 +208,11 @@ func _update_ent(e: Ent, cmd: Dictionary) -> void:
 			e.still += 1
 	else:
 		e.still += 1
+	if e.spyglass > 0:
+		e.spyglass -= 1
+	var g := -1 if frozen or phase != PHASE_SEEK else int(cmd.get("s", -1))
+	if g >= 0 and e.gadget == 0 and e.role != GULL:
+		_gadget(e, posmod(g, Fx.ANGLES), int(cmd.get("sd", -1)))
 	var a := -1 if frozen else int(cmd.get("a", -1))
 	if a >= 0 and e.cooldown == 0:
 		e.cooldown = int(rules.tap_cooldown_ticks)
@@ -217,6 +224,34 @@ func _update_ent(e: Ent, cmd: Dictionary) -> void:
 
 
 ## A disguised hider who moves leaves tells: footprints on sand, ripples in water, noise on the dock.
+## The round's gadget. Hider: a decoy noise where you aim (at most decoy_range away). Seeker: the spyglass (tells
+## stay longer and bots see further for a while).
+func _gadget(e: Ent, ang: int, dist: int) -> void:
+	var gr: Dictionary = rules.gadgets
+	e.gadget = 1
+	if e.role == SEEKER:
+		e.spyglass = int(gr.spyglass_ticks)
+		events.append({"type": "gadget", "id": e.id, "kind": "spyglass"})
+		return
+	var d := int(gr.decoy_range) if dist < 0 else mini(dist, int(gr.decoy_range))
+	var t := Tell.new()
+	t.kind = 2
+	t.x = clampi(e.x + Fx.cos_a(ang) * d / Fx.ONE, 500, width * TILE - 500)
+	t.y = clampi(e.y + Fx.sin_a(ang) * d / Fx.ONE, 500, height * TILE - 500)
+	t.until = tick + int(rules.tells.noise_ticks)
+	tells.append(t)
+	events.append({"type": "gadget", "id": e.id, "kind": "decoy"})
+	events.append({"type": "noise", "x": t.x, "y": t.y})
+
+
+## Tells last spyglass_tell_mult times longer while any seeker has the spyglass up.
+func _tell_life(ticks: int) -> int:
+	for o in ents:
+		if o.role == SEEKER and o.spyglass > 0:
+			return ticks * int(rules.gadgets.spyglass_tell_mult)
+	return ticks
+
+
 func _tell(e: Ent) -> void:
 	var tl: Dictionary = rules.tells
 	if e.moved < int(rules.speed.hider) * int(tl.step_every_ticks):
@@ -229,10 +264,10 @@ func _tell(e: Ent) -> void:
 	match ground:
 		2:
 			t.kind = 0
-			t.until = tick + int(tl.footprint_ticks)
+			t.until = tick + _tell_life(int(tl.footprint_ticks))
 		1:
 			t.kind = 1
-			t.until = tick + int(tl.ripple_ticks)
+			t.until = tick + _tell_life(int(tl.ripple_ticks))
 		3:
 			t.kind = 2
 			t.until = tick + int(tl.noise_ticks)
@@ -370,6 +405,8 @@ func _start_round() -> void:
 		e.found_tick = -1
 		e.found_by = -1
 		e.target = -1
+		e.gadget = 0
+		e.spyglass = 0
 		var sp: Array
 		if e.role == SEEKER:
 			sp = ss[si % ss.size()]

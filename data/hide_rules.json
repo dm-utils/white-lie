@@ -26,6 +26,12 @@
     "noise_radius": 6000,
     "max": 64
   },
+  "gadgets": {
+    "decoy_range": 8000,
+    "spyglass_ticks": 150,
+    "spyglass_tell_mult": 3,
+    "spyglass_sight_pct": 150
+  },
   "points": {
     "hider_per_ticks": 300,
     "last_survivor": 5,

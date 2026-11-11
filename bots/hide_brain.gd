@@ -54,6 +54,10 @@ static func _hider(sim: HideSim, e: HideSim.Ent, cfg: Dictionary) -> Dictionary:
 	if sim.tick >= e.next_think:
 		e.next_think = sim.tick + int(cfg.think_ticks) + sim.rng.range_i(6)
 		var near := _nearest_seeker(sim, e)
+		if near >= 0 and near < 3000 and e.gadget == 0 and sim.rng.range_i(100) < int(cfg.flee_pct) * 2:
+			# a seeker comes close: throw a decoy noise the other way
+			cmd.s = posmod(sim.rng.range_i(Fx.ANGLES), Fx.ANGLES)
+			cmd["sd"] = 6000
 		if near >= 0 and near < 2500 and sim.rng.range_i(100) < int(cfg.flee_pct):
 			e.target = _pick_spot(sim, e, cfg)
 			var p: Array = sim.props[e.target]
@@ -117,6 +121,9 @@ static func _seeker(sim: HideSim, e: HideSim.Ent, cfg: Dictionary) -> Dictionary
 	var tap := int(sim.rules.tap_range)
 	if sim.tick >= e.next_think:
 		e.next_think = sim.tick + int(cfg.think_ticks) + sim.rng.range_i(5)
+		# nothing found after 40 s: put the spyglass up
+		if e.gadget == 0 and sim.tick - sim.seek_from > 1200 and sim.rng.range_i(100) < 20:
+			cmd.s = 0
 		var clue := _clue(sim, e, cfg)
 		if clue != Vector2i(-1, -1):
 			e.goal_x = clue.x
@@ -144,6 +151,8 @@ static func _seeker(sim: HideSim, e: HideSim.Ent, cfg: Dictionary) -> Dictionary
 ## else the freshest tell.
 static func _clue(sim: HideSim, e: HideSim.Ent, cfg: Dictionary) -> Vector2i:
 	var sight := int(cfg.sight)
+	if e.spyglass > 0:
+		sight = sight * int(sim.rules.gadgets.spyglass_sight_pct) / 100
 	for o in sim.ents:
 		if o.role == HideSim.HIDER and Fx.dist(o.x - e.x, o.y - e.y) < sight:
 			if o.disguise < 0 or o.still < int(sim.rules.still_ticks):

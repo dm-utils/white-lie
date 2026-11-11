@@ -51,7 +51,7 @@ def online_check(browser, port: int, shots) -> list:
         pages.append(pg)
     pages[0].wait_for_timeout(1500)
     for pg in pages:
-        pg.mouse.click(480, 331)  # "Online spelen", under Play
+        pg.mouse.click(480, 358)  # "Online spelen", under Play
     pages[0].wait_for_timeout(12000)
     pages[0].keyboard.down("KeyD")
     rx = re.compile(r"online settled tick (\d+) hash (-?\d+) seat (\d+)")
@@ -121,7 +121,7 @@ def main() -> int:
         page.wait_for_timeout(1200)
         shot(page, "web-menu")
         before = canvas_hash(page)
-        page.mouse.click(640, 357)  # Play, the big button under the title
+        page.mouse.click(640, 393)  # Play, the big orange button (under the character button)
         page.wait_for_timeout(2500)
         if canvas_hash(page) == before:
             failures.append("Play did not start a session")

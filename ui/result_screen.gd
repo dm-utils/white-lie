@@ -21,6 +21,8 @@ func _ready() -> void:
 	box.add_child(_label(tr("RESULT_PLACE").format({"place": r.place}), UiTheme.heading(200)))
 	box.add_child(_label(tr("RESULT_POINTS").format({"points": int(r.get("points", 0))}), UiTheme.heading(56, UiTheme.INK, 0)))
 	box.add_child(_label(tr("RESULT_PEARLS").format({"count": outcome.earned}), UiTheme.heading(44, UiTheme.GOLD, 8)))
+	for rew in outcome.unlocked:
+		box.add_child(_label(tr("RESULT_UNLOCKED").format({"name": tr(str(rew.name_key))}), UiTheme.heading(40, UiTheme.GOLD, 8)))
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 30)
@@ -62,5 +64,8 @@ static func apply_result(r: Dictionary) -> Dictionary:
 	mine["wins"] = int(mine.get("wins", 0)) + (1 if int(r.place) == 1 else 0)
 	mastery[str(r.get("character", ""))] = mine
 	p["mastery"] = mastery
+	var w := Rewards.walk(path.rewards, before, before + earned)
+	for rew in w.unlocked:
+		Rewards.grant(p, rew)
 	Platform.save_profile(p)
-	return {"earned": earned, "before": before, "after": before + earned}
+	return {"earned": earned, "before": before, "after": before + earned, "unlocked": w.unlocked}

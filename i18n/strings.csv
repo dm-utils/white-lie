@@ -138,7 +138,7 @@ HIDE_FOUND,Found {found}/{total},Gevonden {found}/{total}
 HIDE_ROUND,Round {round}/{rounds},Ronde {round}/{rounds}
 HIDE_POINTS,{points} pts,{points} ptn
 HIDE_WAIT_DARK,The others are hiding… {seconds},De anderen verstoppen zich… {seconds}
-HIDE_CONTROLS_KEYS,WASD walk · Space disguise / tap · or click a prop,WASD lopen · Spatie vermommen / tikken · of klik op een voorwerp
+HIDE_CONTROLS_KEYS,"WASD walk · Space disguise / tap · Shift gadget · or click","WASD lopen · Spatie vermommen / tikken · Shift gadget · of klik"
 CHAR_SKIPPER,Skipper,Schipper
 CHAR_FISHER,Fisher,Visser
 CHAR_KID,Kid,Kind
@@ -152,3 +152,10 @@ ONLINE_ROOM_WAITING,{players} in the room · tell your friends the code,{players
 HUD_YOU,YOU,JIJ
 ONLINE_PLAYER,Player,Speler
 HIDE_CONTROLS_TOUCH,Left thumb: walk · right button: disguise / tap,Linkerduim: lopen · rechterknop: vermommen / tikken
+HIDE_GADGET_DECOY,Decoy noise,Lokgeluid
+HIDE_GADGET_SPYGLASS,Spyglass,Verrekijker
+HIDE_GADGET_USED,Used,Gebruikt
+HIDE_GADGET_DECOY_USED,A noise over there!,Daar klinkt iets!
+HIDE_GADGET_SPYGLASS_USED,Spyglass up: tells stay longer,Verrekijker: sporen blijven langer
+MENU_CHARACTER,You play: {name} (tap to change),Jij speelt: {name} (tik om te wisselen)
+RESULT_UNLOCKED,New: {name}!,Nieuw: {name}!

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "_note": "Pearls per place after a session (phase 5 adds rewards).",
+  "_note": "Pearls per place after a session; rewards unlock along the way (kind character -> unlocked_characters).",
   "pearls_for_place": [
     0,
     60,
@@ -10,5 +10,18 @@
     18,
     12
   ],
-  "rewards": []
+  "rewards": [
+    {
+      "at": 150,
+      "kind": "character",
+      "id": "fisher",
+      "name_key": "CHAR_FISHER"
+    },
+    {
+      "at": 400,
+      "kind": "character",
+      "id": "kid",
+      "name_key": "CHAR_KID"
+    }
+  ]
 }

@@ -32,6 +32,7 @@ func _ready() -> void:
 	test_characters_and_result()
 	test_room_codes()
 	test_hide_sim()
+	test_gadgets()
 	print("tests: %d passed, %d failed" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
 
@@ -407,6 +408,12 @@ func test_characters_and_result() -> void:
 	var o: Dictionary = preload("res://ui/result_screen.gd").apply_result({"place": 1, "points": 30, "character": "kid"})
 	var p: Dictionary = Platform.load_profile()
 	check(int(o.earned) == 60 and int(p.pearls_total) == 60 and int(p.stats.wins) == 1 and int(p.mastery.kid.matches) == 1, "a win: 60 pearls, a win, kid mastery counted")
+	for i in 2:
+		o = preload("res://ui/result_screen.gd").apply_result({"place": 1, "points": 30, "character": "kid"})
+	p = Platform.load_profile()
+	check(int(p.pearls_total) == 180 and (p.unlocked_characters as Array) == ["fisher"] and o.unlocked.size() == 1, "150 pearls unlock the fisher")
+	var Menu := preload("res://ui/main_menu.gd")
+	check(Menu.next_character(p) == "fisher" and Menu.next_character({"selected_character": "skipper"}) == "skipper", "the character button only offers what you have")
 	DirAccess.remove_absolute(backend.profile_path)
 	backend.profile_path = saved_path
 
@@ -565,4 +572,36 @@ func test_room_codes() -> void:
 	check(ok, "room codes: 4 characters, no look-alikes")
 	var OS_ := preload("res://ui/online_screen.gd")
 	check(OS_.clean_code("k7pq") == "K7PQ" and OS_.clean_code(" k-7 p q x") == "K7PQ" and OS_.clean_code("o1il") == "", "typed codes: capitals, look-alikes dropped, at most 4")
+
+
+## Gadgets: one per round; the hider's decoy makes a noise where it aims, the seeker's spyglass makes tells last longer.
+func test_gadgets() -> void:
+	var m := HideMatch.create(31, "skipper", 6, "normal")
+	var s := m.sim
+	var idle: Array = []
+	for i in 6:
+		idle.append({})
+	var use := idle.duplicate(true)
+	use[0] = {"s": 0, "sd": 5000}
+	s.step(use)
+	check(s.ents[0].gadget == 0, "no gadget during the hide phase")
+	s.phase_left = 1
+	s.step(idle)
+	var hider: HideSim.Ent = s.ents[0]
+	var n := s.tells.size()
+	s.step(use)
+	var noise: Array = s.tells.filter(func(t): return t.kind == 2)
+	check(hider.gadget == 1 and s.tells.size() == n + 1 and noise.size() >= 1 and absi(noise[-1].x - (hider.x + 5000)) <= 200, "decoy: a noise 5 tiles away where the hider aimed")
+	var before := s.tells.size()
+	s.step(use)
+	check(s.tells.size() <= before, "only one gadget per round")
+	var seeker: HideSim.Ent = s.ents[2]
+	var su := idle.duplicate(true)
+	su[2] = {"s": 0}
+	s.step(su)
+	check(seeker.gadget == 1 and seeker.spyglass > 0, "spyglass up")
+	check(s._tell_life(100) == 100 * int(s.rules.gadgets.spyglass_tell_mult), "while it is up, tells last longer")
+	for i in int(s.rules.gadgets.spyglass_ticks):
+		s.step(idle)
+	check(seeker.spyglass == 0 and s._tell_life(100) == 100, "and then it wears off")
 
