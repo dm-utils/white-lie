@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>$GODOT_PROJECT_NAME</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #7FD8F0; touch-action: none; }
+  #canvas { display: block; width: 100%; height: 100%; outline: none; }
+  /* Loader is CSS-only so the page keeps moving while the engine downloads and compiles. */
+  #loader { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(#7FD8F0, #5FD3C9 60%, #1F6F9F); font-family: system-ui, sans-serif; color: #fff; z-index: 2; transition: opacity .4s; }
+  #loader h1 { font-size: clamp(48px, 12vw, 120px); margin: 0; letter-spacing: .04em; text-shadow: 0 6px 0 #2B3A4A; }
+  #loader .bar { width: min(60vw, 420px); height: 14px; border: 3px solid #2B3A4A; border-radius: 99px; background: #fff; overflow: hidden; margin-top: 28px; }
+  #loader .bar i { display: block; height: 100%; width: 0; background: #FFC530; transition: width .2s; }
+  #loader .wave { position: absolute; left: -10%; width: 120%; height: 80px; bottom: 0;
+    background: radial-gradient(60px 26px at 60px 0, transparent 98%, rgba(247,251,248,.55) 100%) 0 0/120px 80px repeat-x;
+    animation: wave 3s linear infinite; }
+  #loader .wave.b { bottom: 36px; animation-duration: 4.5s; opacity: .6; }
+  @keyframes wave { to { transform: translateX(-120px); } }
+  #loader .msg { margin-top: 14px; font-weight: 700; min-height: 1.4em; }
+  #loader.done { opacity: 0; pointer-events: none; }
+</style>
+$GODOT_HEAD_INCLUDE
+</head>
+<body>
+<canvas id="canvas">Your browser does not support the canvas element.</canvas>
+<div id="loader"><h1>VERSTOPPERTJE</h1><div class="bar"><i id="bar"></i></div><div class="msg" id="msg"></div><div class="wave b"></div><div class="wave"></div></div>
+<script src="$GODOT_URL"></script>
+<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+const engine = new Engine(GODOT_CONFIG);
+(function () {
+  const loader = document.getElementById('loader');
+  const bar = document.getElementById('bar');
+  const msg = document.getElementById('msg');
+  const missing = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
+  if (missing.length !== 0) {
+    msg.textContent = 'This browser is missing: ' + missing.join(', ');
+    return;
+  }
+  engine.startGame({
+    onProgress: function (current, total) {
+      if (total > 0) bar.style.width = Math.round(current / total * 100) + '%';
+    },
+  }).then(function () {
+    loader.classList.add('done');
+  }, function (err) {
+    msg.textContent = 'Could not start: ' + err;
+  });
+})();
+</script>
+</body>
+</html>

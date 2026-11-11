@@ -1,0 +1,27 @@
+# Godot
+.godot/
+*.translation
+export_credentials.cfg
+android/build/
+
+# Build output
+build/
+
+# Local secrets and env files (never commit)
+.env
+.env.*
+*.keystore
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+__pycache__/
+
+# sound effects are build output: tools/audio/sfx.py --ffmpeg (CI runs it before the import)
+assets/audio/sfx/*.ogg
+assets/audio/sfx/*.ogg.import

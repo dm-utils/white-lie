@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "rate": 44100,
+  "peak_dbfs": -4.0,
+  "_layers": "type sine|triangle|square|noise; f0->f1 Hz glide (noise: lowpass cutoff f0->f1); t start s; dur s; attack s; curve = decay power (1 linear, 3 snappy); gain 0..1; vib = [Hz, depth semitones]",
+  "sounds": {
+    "snip":        { "note": "crab attack: two quick metallic snips", "layers": [
+      { "type": "noise", "f0": 9000, "f1": 6000, "t": 0.0, "dur": 0.035, "attack": 0.001, "curve": 3, "gain": 0.7 },
+      { "type": "triangle", "f0": 2600, "f1": 2300, "t": 0.0, "dur": 0.05, "attack": 0.001, "curve": 3, "gain": 0.5 },
+      { "type": "noise", "f0": 9000, "f1": 6000, "t": 0.07, "dur": 0.035, "attack": 0.001, "curve": 3, "gain": 0.6 },
+      { "type": "triangle", "f0": 3000, "f1": 2700, "t": 0.07, "dur": 0.05, "attack": 0.001, "curve": 3, "gain": 0.45 } ] },
+    "plop":        { "note": "octopus attack: a wet plop", "layers": [
+      { "type": "sine", "f0": 700, "f1": 180, "t": 0.0, "dur": 0.11, "attack": 0.002, "curve": 2, "gain": 0.9 },
+      { "type": "noise", "f0": 1800, "f1": 600, "t": 0.0, "dur": 0.04, "attack": 0.001, "curve": 2, "gain": 0.25 } ] },
+    "peck":        { "note": "gull attack: a short chirp", "layers": [
+      { "type": "triangle", "f0": 1300, "f1": 2100, "t": 0.0, "dur": 0.07, "attack": 0.002, "curve": 2, "gain": 0.8 },
+      { "type": "noise", "f0": 6000, "f1": 4000, "t": 0.0, "dur": 0.015, "attack": 0.0005, "curve": 3, "gain": 0.5 } ] },
+    "dash":        { "note": "crab special: a scuttling whoosh", "layers": [
+      { "type": "noise", "f0": 900, "f1": 3500, "t": 0.0, "dur": 0.28, "attack": 0.05, "curve": 1.5, "gain": 0.8 },
+      { "type": "square", "f0": 160, "f1": 240, "t": 0.0, "dur": 0.2, "attack": 0.01, "curve": 2, "gain": 0.15, "vib": [28, 1.5] } ] },
+    "ink":         { "note": "octopus special: a bubbly blorp", "layers": [
+      { "type": "sine", "f0": 320, "f1": 90, "t": 0.0, "dur": 0.45, "attack": 0.01, "curve": 1.5, "gain": 0.8, "vib": [14, 2.0] },
+      { "type": "noise", "f0": 700, "f1": 300, "t": 0.0, "dur": 0.4, "attack": 0.02, "curve": 1.5, "gain": 0.35 } ] },
+    "dive":        { "note": "gull special: a falling whistle (announces the dive)", "layers": [
+      { "type": "sine", "f0": 2200, "f1": 600, "t": 0.0, "dur": 0.4, "attack": 0.02, "curve": 0.8, "gain": 0.7 },
+      { "type": "noise", "f0": 5000, "f1": 2000, "t": 0.0, "dur": 0.4, "attack": 0.1, "curve": 1, "gain": 0.15 } ] },
+    "boom":        { "note": "dive landing: a big splash", "layers": [
+      { "type": "sine", "f0": 140, "f1": 50, "t": 0.0, "dur": 0.3, "attack": 0.002, "curve": 2, "gain": 0.9 },
+      { "type": "noise", "f0": 4000, "f1": 500, "t": 0.0, "dur": 0.55, "attack": 0.003, "curve": 2, "gain": 0.7 } ] },
+    "hit":         { "note": "somebody got hit: a soft bonk", "layers": [
+      { "type": "sine", "f0": 260, "f1": 120, "t": 0.0, "dur": 0.09, "attack": 0.001, "curve": 2.5, "gain": 0.9 },
+      { "type": "noise", "f0": 3000, "f1": 1200, "t": 0.0, "dur": 0.03, "attack": 0.0005, "curve": 3, "gain": 0.35 } ] },
+    "splash":      { "note": "into the water", "layers": [
+      { "type": "noise", "f0": 3500, "f1": 700, "t": 0.0, "dur": 0.32, "attack": 0.004, "curve": 2.2, "gain": 0.75 },
+      { "type": "sine", "f0": 900, "f1": 1500, "t": 0.05, "dur": 0.05, "attack": 0.002, "curve": 2, "gain": 0.2 },
+      { "type": "sine", "f0": 1100, "f1": 1800, "t": 0.12, "dur": 0.04, "attack": 0.002, "curve": 2, "gain": 0.15 } ] },
+    "ko":          { "note": "washed away: a comic descending wobble", "layers": [
+      { "type": "triangle", "f0": 900, "f1": 160, "t": 0.0, "dur": 0.7, "attack": 0.01, "curve": 1.2, "gain": 0.7, "vib": [9, 1.2] },
+      { "type": "noise", "f0": 3000, "f1": 500, "t": 0.25, "dur": 0.5, "attack": 0.05, "curve": 2, "gain": 0.4 } ] },
+    "kick":        { "note": "Strandbal: the ball is kicked, a rubbery thump", "layers": [
+      { "type": "sine", "f0": 190, "f1": 70, "t": 0.0, "dur": 0.13, "attack": 0.001, "curve": 2.2, "gain": 0.9 },
+      { "type": "noise", "f0": 2500, "f1": 900, "t": 0.0, "dur": 0.025, "attack": 0.0005, "curve": 3, "gain": 0.45 },
+      { "type": "triangle", "f0": 520, "f1": 380, "t": 0.0, "dur": 0.06, "attack": 0.001, "curve": 2, "gain": 0.2 } ] },
+    "whistle":     { "note": "Strandbal: kickoff and full time, a short trilling referee whistle", "layers": [
+      { "type": "triangle", "f0": 2750, "f1": 2700, "t": 0.0, "dur": 0.42, "attack": 0.015, "curve": 0.6, "gain": 0.5, "vib": [32, 0.7] },
+      { "type": "noise", "f0": 7000, "f1": 6000, "t": 0.0, "dur": 0.42, "attack": 0.02, "curve": 0.8, "gain": 0.12 } ] },
+    "cheer":       { "note": "Strandbal: goal! a rising fanfare over a crowd-like rush", "layers": [
+      { "type": "noise", "f0": 1800, "f1": 2600, "t": 0.0, "dur": 1.1, "attack": 0.12, "curve": 1.4, "gain": 0.45 },
+      { "type": "triangle", "f0": 523, "f1": 523, "t": 0.0, "dur": 0.16, "attack": 0.005, "curve": 1.5, "gain": 0.5 },
+      { "type": "triangle", "f0": 659, "f1": 659, "t": 0.13, "dur": 0.16, "attack": 0.005, "curve": 1.5, "gain": 0.5 },
+      { "type": "triangle", "f0": 784, "f1": 784, "t": 0.26, "dur": 0.16, "attack": 0.005, "curve": 1.5, "gain": 0.5 },
+      { "type": "triangle", "f0": 1047, "f1": 1047, "t": 0.39, "dur": 0.5, "attack": 0.005, "curve": 1.2, "gain": 0.55, "vib": [6, 0.3] } ] },
+    "snack":       { "note": "ate a snack: two happy notes", "layers": [
+      { "type": "triangle", "f0": 1047, "f1": 1047, "t": 0.0, "dur": 0.09, "attack": 0.003, "curve": 2, "gain": 0.6 },
+      { "type": "triangle", "f0": 1319, "f1": 1319, "t": 0.08, "dur": 0.14, "attack": 0.003, "curve": 2, "gain": 0.6 } ] },
+    "tide":        { "note": "tide warning: a swelling wave you hear without looking", "layers": [
+      { "type": "noise", "f0": 300, "f1": 2500, "t": 0.0, "dur": 2.2, "attack": 1.8, "curve": 2, "gain": 0.8 },
+      { "type": "sine", "f0": 70, "f1": 95, "t": 0.0, "dur": 2.2, "attack": 1.6, "curve": 2, "gain": 0.35 } ] },
+    "win":         { "note": "last one dry: a little fanfare", "layers": [
+      { "type": "triangle", "f0": 784, "f1": 784, "t": 0.0, "dur": 0.12, "attack": 0.003, "curve": 2, "gain": 0.55 },
+      { "type": "triangle", "f0": 988, "f1": 988, "t": 0.11, "dur": 0.12, "attack": 0.003, "curve": 2, "gain": 0.55 },
+      { "type": "triangle", "f0": 1175, "f1": 1175, "t": 0.22, "dur": 0.12, "attack": 0.003, "curve": 2, "gain": 0.55 },
+      { "type": "triangle", "f0": 1568, "f1": 1568, "t": 0.33, "dur": 0.4, "attack": 0.003, "curve": 1.5, "gain": 0.6, "vib": [6, 0.3] } ] },
+    "tap":         { "note": "UI button", "layers": [
+      { "type": "sine", "f0": 1500, "f1": 1300, "t": 0.0, "dur": 0.03, "attack": 0.001, "curve": 2.5, "gain": 0.6 },
+      { "type": "noise", "f0": 6000, "f1": 6000, "t": 0.0, "dur": 0.008, "attack": 0.0005, "curve": 2, "gain": 0.2 } ] }
+  }
+}

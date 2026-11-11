@@ -1,0 +1,255 @@
+keys,en,nl
+TITLE,VERSTOPPERTJE,VERSTOPPERTJE
+BOOT_WORKING_TITLE,working title,werktitel
+BOOT_TAP,Tap to start,Tik om te beginnen
+BOOT_LOADING,Loading…,Laden…
+MENU_PLAY,PLAY,SPELEN
+MENU_DAILY,Daily Challenge,Dagelijkse uitdaging
+MENU_DAILY_ENDS,New in {time},Nieuw over {time}
+MENU_DAILY_LOADING,Loading…,Laden…
+MENU_COLLECTION,Collection,Collectie
+MENU_PATH,Treasure Path,Schattenpad
+MENU_LEADERBOARD,Leaderboard,Ranglijst
+MENU_PROFILE,Profile,Profiel
+MENU_SETTINGS,Settings,Instellingen
+MENU_COMING_SOON,Coming soon,Binnenkort
+MENU_ANIMALS_LOADED,{count} animals ready,{count} dieren klaar
+MENU_VERSION,Version {version},Versie {version}
+COMMON_BACK,Back,Terug
+ANIMAL_CRAB,Pinch the Beach Crab,Kees de Strandkrab
+ANIMAL_OCTOPUS,Inka the Octopus,Inka de Octopus
+ANIMAL_GULL,Skye the Gull,Skye de Meeuw
+ANIMAL_PUFFER,Puff the Pufferfish,Puf de Kogelvis
+ANIMAL_OTTER,Slick the Otter,Glij de Otter
+ANIMAL_SEAL,Bumper the Seal,Bonk de Zeehond
+ANIMAL_HERMIT,Shelly the Hermit Crab,Schelpje de Heremietkreeft
+ANIMAL_STAR,Twinkle the Starfish,Twinkel de Zeester
+REWARD_SHELL_AVATAR,Shell avatar,Schelp-avatar
+REWARD_BEACHCOMBER,Beachcomber badge,Jutter-badge
+REWARD_SUNSET_PINCH,Sunset Pinch look,Zonsondergang-look voor Kees
+REWARD_WAVE_AVATAR,Wave avatar,Golf-avatar
+REWARD_MIDNIGHT_INKA,Midnight Inka look,Middernacht-look voor Inka
+REWARD_TIDE_MASTER,Tide Master badge,Getijmeester-badge
+HUD_LEFT,{count} left,nog {count}
+HUD_TIDE,Tide {level}/{max},Getij {level}/{max}
+HUD_SPECIAL,SPECIAL,SPECIAAL
+HUD_TIDE_RISES,The tide rises!,Het water stijgt!
+HUD_TIDE_WARNING,Tide coming in…,Het water komt op…
+HUD_SUDDEN_DEATH,Sudden death!,Sudden death!
+HUD_WASHED_AWAY,Washed away!,Weggespoeld!
+HUD_LAST_DRY,Last one dry!,Als laatste droog!
+HUD_YOU,YOU,JIJ
+HUD_CONTROLS_KEYS,WASD move · Space attack (auto-aim) · Shift special,WASD lopen · Spatie aanvallen (richt zelf) · Shift speciaal
+HUD_CONTROLS_MOUSE,WASD move · click attack · right-click special,WASD lopen · klik aanvallen · rechtsklik speciaal
+HUD_SKIP,Skip,Overslaan
+DROP_TITLE,Dropping in…,Invallen…
+RESULT_PLACE,#{place},#{place}
+RESULT_WIN,Last one dry!,Als laatste droog!
+RESULT_CLOSE,So close — washed away near the end.,Bijna — vlak voor het eind weggespoeld.
+RESULT_LOST,Washed away by the tide.,Weggespoeld door het getij.
+RESULT_KOS,{count} knockouts,{count} uitgeschakeld
+RESULT_SURVIVED,{seconds}s survived,{seconds} s overleefd
+RESULT_PEARLS,+{count} pearls,+{count} parels
+RESULT_NEXT,Next: {reward} at {at},Volgende: {reward} bij {at}
+RESULT_UNLOCKED,New on your path: {reward}!,Nieuw op je pad: {reward}!
+RESULT_AGAIN,Again,Nog een keer
+RESULT_MENU,Menu,Menu
+RESULT_DAILY_SCORE,Daily score {score} · best today {best},Dagscore {score} · beste vandaag {best}
+RESULT_DAILY_OFFLINE,Offline: this score does not count today.,Offline: deze score telt vandaag niet mee.
+RESULT_DAILY_SIGN_IN,Sign in to put your daily score on the leaderboard.,Log in om je dagscore op de ranglijst te zetten.
+RESULT_SENDING,Sending your score…,Score versturen…
+RESULT_SENT,"{score} points on the {board} board, checked soon","{score} punten op de {board}, wordt binnenkort nagekeken"
+RESULT_SEND_OFFLINE,No connection: this score was not sent.,Geen verbinding: deze score is niet verstuurd.
+RESULT_SEND_FAILED,Score not accepted ({reason}).,Score niet geaccepteerd ({reason}).
+BOARD_DAY,day leaderboard,dagranglijst
+BOARD_WEEK,week leaderboard,weekranglijst
+BOARD_TAB_DAY,Today,Vandaag
+BOARD_TAB_WEEK,This week,Deze week
+BOARD_LOADING,Loading…,Laden…
+BOARD_OFFLINE,The leaderboard could not be reached. Try again later.,De ranglijst is niet bereikbaar. Probeer het later nog eens.
+BOARD_EMPTY,No scores yet. Be the first!,Nog geen scores. Wees de eerste!
+BOARD_PLAYERS,{count} players,{count} spelers
+BOARD_SIGN_IN,Sign in (Settings) to get on the leaderboard.,Log in (Instellingen) om op de ranglijst te komen.
+BOARD_YOU,You,Jij
+BOARD_PLAYER,Player {id},Speler {id}
+BOARD_PENDING,being checked,wordt nagekeken
+PATH_COMPLETE,Path complete!,Pad voltooid!
+MENU_PEARLS,{count} pearls,{count} parels
+SETTINGS_TITLE,Settings,Instellingen
+SETTINGS_CONTROLS,Controls (PC),Besturing (pc)
+CONTROLS_KEYS,Keyboard only (auto-aim),Alleen toetsenbord (richt zelf)
+CONTROLS_MOUSE,Keyboard + mouse aim,Toetsenbord + muis richten
+SETTINGS_ACCOUNT,Account,Account
+ACCOUNT_GUEST,Playing as guest — your progress is only on this device.,Je speelt als gast — je voortgang staat alleen op dit apparaat.
+ACCOUNT_SIGNED_IN,Signed in as {email},Ingelogd als {email}
+ACCOUNT_SIGN_IN,Sign in to save progress,Log in om je voortgang te bewaren
+ACCOUNT_SIGN_OUT,Sign out,Uitloggen
+ACCOUNT_SIGN_OUT_ALL,Sign out everywhere,Overal uitloggen
+SIGNIN_TITLE,Sign in,Inloggen
+SIGNIN_EMAIL_HINT,Sign in with your e-mail. We send you a 6-digit code — no password.,Log in met je e-mailadres. We sturen je een code van 6 cijfers — geen wachtwoord.
+SIGNIN_EMAIL_PLACEHOLDER,you@example.com,jij@voorbeeld.nl
+SIGNIN_SEND,Send code,Stuur code
+SIGNIN_CODE_HINT,We sent a code to {email}. It is valid for 10 minutes.,We hebben een code gestuurd naar {email}. Die is 10 minuten geldig.
+SIGNIN_CODE_PLACEHOLDER,6-digit code,code van 6 cijfers
+SIGNIN_VERIFY,Sign in,Inloggen
+SIGNIN_RESEND,Send again,Opnieuw sturen
+SIGNIN_RESEND_IN,Send again in {seconds}s,Opnieuw sturen over {seconds} s
+SIGNIN_OTHER_ADDRESS,Use another address,Ander adres gebruiken
+SIGNIN_DONE,Signed in — your progress is saved to the cloud.,Ingelogd — je voortgang wordt in de cloud bewaard.
+ERROR_INVALID_EMAIL,That does not look like an e-mail address.,Dat lijkt geen e-mailadres.
+ERROR_INVALID_CODE,That code is not right or has expired.,Die code klopt niet of is verlopen.
+ERROR_RATE_LIMITED,Too many tries. Try again in {seconds}s.,Te veel pogingen. Probeer het over {seconds} s opnieuw.
+ERROR_MAIL_UNAVAILABLE,We can't send mail right now. Try again later.,We kunnen nu geen mail sturen. Probeer het later opnieuw.
+ERROR_NETWORK,No connection. Check your internet and try again.,Geen verbinding. Controleer je internet en probeer het opnieuw.
+ERROR_GENERIC,Something went wrong. Try again.,Er ging iets mis. Probeer het opnieuw.
+SETTINGS_REPORT,Report a problem,Probleem melden
+REPORT_TITLE,Report a problem,Probleem melden
+REPORT_HOTKEY,Tip: press F8 anywhere to report what you see.,Tip: druk overal op F8 om te melden wat je ziet.
+REPORT_CATEGORY_BUG,Bug,Fout
+REPORT_CATEGORY_IDEA,Idea,Idee
+REPORT_CATEGORY_OTHER,Other,Anders
+REPORT_TEXT_PLACEHOLDER,What happened? What did you expect?,Wat gebeurde er? Wat had je verwacht?
+REPORT_ATTACH_SCREENSHOT,Add a screenshot of this moment,Schermafbeelding van dit moment toevoegen
+REPORT_ATTACH_SAVE,Add my save (helps us reproduce it),Mijn save toevoegen (helpt ons het na te spelen)
+REPORT_SEND,Send,Versturen
+REPORT_CANCEL,Cancel,Annuleren
+REPORT_SENDING,Sending…,Versturen…
+REPORT_SENT,Thanks! We read every report.,Bedankt! We lezen elke melding.
+REPORT_SENT_NO_ATTACHMENTS,Thanks! Your report was sent, but the attachments could not be added.,"Bedankt! Je melding is verstuurd, maar de bijlagen konden niet mee."
+REPORT_EMPTY,Write a few words first.,Schrijf eerst een paar woorden.
+SETTINGS_LANGUAGE,Language,Taal
+SETTINGS_SOUND,Sound effects,Geluidseffecten
+NAME_ADJ_SWIFT,Swift,Snelle
+NAME_ADJ_BRAVE,Brave,Dappere
+NAME_ADJ_SNEAKY,Sneaky,Stiekeme
+NAME_ADJ_SUNNY,Sunny,Zonnige
+NAME_ADJ_SALTY,Salty,Zoute
+NAME_ADJ_BOUNCY,Bouncy,Stuiterende
+NAME_ADJ_SLEEPY,Sleepy,Slaperige
+NAME_ADJ_MIGHTY,Mighty,Machtige
+NAME_ADJ_LUCKY,Lucky,Gelukkige
+NAME_ADJ_FIZZY,Fizzy,Bruisende
+NAME_ADJ_JOLLY,Jolly,Vrolijke
+NAME_ADJ_DARING,Daring,Gedurfde
+NAME_NOUN_OTTER,Otter,Otter
+NAME_NOUN_GULL,Gull,Meeuw
+NAME_NOUN_CRAB,Crab,Krab
+NAME_NOUN_SQUID,Squid,Inktvis
+NAME_NOUN_SEAL,Seal,Zeehond
+NAME_NOUN_CLAM,Clam,Mossel
+NAME_NOUN_PUFFER,Puffer,Kogelvis
+NAME_NOUN_STARFISH,Starfish,Zeester
+NAME_NOUN_SHRIMP,Shrimp,Garnaal
+NAME_NOUN_PELICAN,Pelican,Pelikaan
+NAME_NOUN_TURTLE,Turtle,Schildpad
+NAME_NOUN_URCHIN,Urchin,Zee-egel
+NAME_FORMAT,{adjective} {noun} {number},{adjective} {noun} {number}
+SETTINGS_NAME,Player name,Spelersnaam
+SETTINGS_NAME_OTHER,Another name,Andere naam
+MASTERY_BRONZE,Bronze,Brons
+MASTERY_SILVER,Silver,Zilver
+MASTERY_GOLD,Gold,Goud
+RESULT_MASTERY,{tier} mastery with {animal}!,{tier} meesterschap met {animal}!
+PROFILE_TITLE,{name},{name}
+PROFILE_FAVOURITE,Favourite: {animal},Favoriet: {animal}
+PROFILE_BADGES,Mastery,Meesterschap
+PROFILE_NO_BADGES,No mastery yet.,Nog geen meesterschap.
+PROFILE_COLLECTION,{count} animals collected,{count} dieren verzameld
+PROFILE_LOADING,Loading profile…,Profiel laden…
+PROFILE_UNAVAILABLE,This player has no public profile yet.,Deze speler heeft nog geen openbaar profiel.
+COMMON_CLOSE,Close,Sluiten
+BOARD_FRIENDS_ONLY,Friends only,Alleen vrienden
+FRIENDS_TITLE,Friends,Vrienden
+FRIENDS_LOADING,Loading friends…,Vrienden laden…
+FRIENDS_SIGN_IN,Sign in (Settings) to add friends.,Log in (Instellingen) om vrienden toe te voegen.
+FRIENDS_YOUR_CODE,Your code:,Jouw code:
+FRIENDS_COPY,Copy,Kopiëren
+FRIENDS_COPIED,Copied,Gekopieerd
+FRIENDS_CODE_HINT,Friend's code,Code van een vriend
+FRIENDS_ADD,Add,Toevoegen
+FRIENDS_ADDED,{name} added.,{name} toegevoegd.
+FRIENDS_NONE,No friends yet. Share your code!,Nog geen vrienden. Deel je code!
+FRIENDS_REMOVE,Remove,Verwijderen
+FRIENDS_BAD_CODE,A code has 8 characters.,Een code heeft 8 tekens.
+FRIENDS_UNKNOWN_CODE,Nobody has this code.,Niemand heeft deze code.
+FRIENDS_OWN_CODE,That is your own code.,Dat is je eigen code.
+FRIENDS_TOO_MANY,You have the maximum of 100 friends.,Je hebt het maximum van 100 vrienden.
+FRIENDS_SLOW_DOWN,Not so fast — try again in a minute.,Niet zo snel — probeer het over een minuut opnieuw.
+PRIVACY_TITLE,Privacy,Privacy
+PRIVACY_READ,What we keep,Wat we bewaren
+PRIVACY_DOWNLOAD,Download my data,Mijn gegevens downloaden
+PRIVACY_DELETE,Delete my account,Mijn account verwijderen
+PRIVACY_DELETE_CONFIRM,Tap again to delete,Tik nog eens om te verwijderen
+PRIVACY_DELETE_EXPLAIN,"Your account, cloud save, scores, profile, friends and reports will be deleted. Your progress on this device stays.","Je account, cloud-save, scores, profiel, vrienden en meldingen worden verwijderd. Je voortgang op dit apparaat blijft."
+PRIVACY_DELETING,Deleting…,Verwijderen…
+PRIVACY_DELETED,Your account is deleted. Anything left is erased within the hour.,"Je account is verwijderd. Wat er nog over is, wordt binnen een uur gewist."
+PRIVACY_DELETE_FAILED,Could not delete right now. Check the connection and try again.,Verwijderen lukte nu niet. Controleer de verbinding en probeer het opnieuw.
+PRIVACY_GATHERING,Gathering your data…,Je gegevens verzamelen…
+PRIVACY_SAVED_AT,Saved: {path},Opgeslagen: {path}
+PRIVACY_SAVED_WEB,Your browser is downloading the file.,Je browser downloadt het bestand.
+PRIVACY_PARTIAL,Not every service answered; try again later for a complete file.,Niet elke dienst antwoordde; probeer het later opnieuw voor een volledig bestand.
+PRIVACY_P1,"Getij keeps your progress on this device. Without an account nothing about you leaves the device, except anonymous crash reports (no name, no address, no IP address).","Getij bewaart je voortgang op dit apparaat. Zonder account verlaat niets over jou het apparaat, behalve anonieme crashmeldingen (geen naam, geen adres, geen IP-adres)."
+PRIVACY_P2,"With an account we keep: your e-mail address (to send you sign-in codes), your cloud save and your sign-in sessions.","Met een account bewaren we: je e-mailadres (om je inlogcodes te sturen), je cloud-save en je inlogsessies."
+PRIVACY_P3,"On the leaderboards you appear under a pseudonym, never your e-mail: your scores, your generated name, favourite animal, mastery and collection, your friend code and the friends you added.","Op de ranglijsten sta je onder een pseudoniem, nooit met je e-mail: je scores, je gegenereerde naam, favoriete dier, meesterschap en collectie, je vriendcode en de vrienden die je toevoegde."
+PRIVACY_P4,"How long: reports you send are kept up to 2 years (screenshots and saves 180 days), crash reports 90 days, scores 400 days, sign-in codes 15 minutes.","Hoe lang: meldingen die je stuurt bewaren we tot 2 jaar (schermafbeeldingen en saves 180 dagen), crashmeldingen 90 dagen, scores 400 dagen, inlogcodes 15 minuten."
+PRIVACY_P5,"Everything is stored in the European Union. We do not sell data, show no ads and do not track you across apps or websites.","Alles staat in de Europese Unie. We verkopen geen gegevens, tonen geen advertenties en volgen je niet over apps of websites."
+PRIVACY_P6,You can download all your data or delete your account here in Settings. Deleting is immediate; anything left is erased within the hour.,"Je kunt hier in Instellingen al je gegevens downloaden of je account verwijderen. Verwijderen gaat meteen; wat er nog over is, wordt binnen een uur gewist."
+PRIVACY_P7,Questions or a request? Mail privacy@steefbeest.nl or use Report a problem (F8).,Vragen of een verzoek? Mail naar privacy@steefbeest.nl of gebruik Probleem melden (F8).
+PRIVACY_FULL,Full privacy statement,Volledige privacyverklaring
+CONTROLS_TOUCH,Touch (phone, tablet),Aanraken (telefoon, tablet)
+HUD_CONTROLS_TOUCH,Left thumb: move · hold the orange button: attack · Special above it,Linkerduim: lopen · oranje knop vasthouden: aanvallen · Speciaal erboven
+SEASON_STORM,Storm Season,Stormseizoen
+REWARD_STORM_AVATAR,Storm cloud avatar,Stormwolk-avatar
+LOOK_GULL_STORM,Storm look for Skye,Storm-look voor Skye
+LOOK_CRAB_STORM,Storm look for Pinch,Storm-look voor Kees
+LOOK_OCTOPUS_STORM,Storm look for Inka,Storm-look voor Inka
+REWARD_STORM_RIDER,Storm Rider badge,Stormrijder-badge
+MENU_SEASON,{season}: {days} days left,{season}: nog {days} dagen
+RESULT_SEASON,{season}: {pearls} pearls,{season}: {pearls} parels
+RESULT_SEASON_NEXT,Next on {season}: {reward} at {at},Volgende in {season}: {reward} bij {at}
+COLLECTION_SOON,Coming soon,Binnenkort
+COLLECTION_SOON_LONG,This animal is on its way. It will be on the Treasure Path once it can play.,Dit dier is onderweg. Het staat op het Schattenpad zodra het kan meespelen.
+COLLECTION_FROM_PATH,Treasure Path: {at} pearls,Schattenpad: {at} parels
+COLLECTION_FROM_SEASON,{season}: {at} pearls,{season}: {at} parels
+COLLECTION_CHOSEN,Chosen,Gekozen
+COLLECTION_CHOOSE,Choose,Kiezen
+COLLECTION_ATTACK,Attack,Aanval
+COLLECTION_SPECIAL,Special,Speciaal
+COLLECTION_MASTERY,"Mastery: {tier} ({matches} matches, {wins} won)","Meesterschap: {tier} ({matches} potjes, {wins} gewonnen)"
+COLLECTION_NO_TIER,none yet,nog geen
+COLLECTION_LOOKS,Looks,Looks
+COLLECTION_STANDARD,Standard,Standaard
+ANIMAL_TYPE_LAND,"Land animal: fast on dry sand, slow in water.","Landdier: snel op droog zand, traag in het water."
+ANIMAL_TYPE_WATER,"Water animal: fast in shallow water, slower on land.","Waterdier: snel in ondiep water, trager op het land."
+ANIMAL_TYPE_FLYER,"Flyer: the same speed everywhere, but tires over deep water.","Vlieger: overal even snel, maar wordt moe boven diep water."
+ATTACK_DESC_SNIP,"a short, strong snip up close","een korte, harde knip dichtbij"
+ATTACK_DESC_FAN,three ink drops in a fan,drie inktdruppels in een waaier
+ATTACK_DESC_LONG,one fast peck from far away,één snelle pik van ver weg
+SPECIAL_DESC_DASH,a sideways dash that pushes others away,een zijwaartse sprint die anderen wegduwt
+SPECIAL_DESC_INK,an ink cloud that slows everyone inside,een inktwolk die iedereen erin vertraagt
+SPECIAL_DESC_DIVE,a dive onto a spot: a big splash after a moment,een duik op een plek: na een tel een grote plons
+MENU_ONLINE,Play online,Online spelen
+ONLINE_TITLE,Online,Online
+ONLINE_CONNECTING,Connecting…,Verbinden…
+ONLINE_WAITING,{players} found · starting in {seconds} s (bots fill the rest),{players} gevonden · start over {seconds} s (bots vullen aan)
+ONLINE_CANCEL,Cancel,Annuleren
+ONLINE_OFFLINE,Can't reach the online service right now.,De online dienst is nu niet bereikbaar.
+ONLINE_WAITING_START,Waiting for the others…,Wachten op de anderen…
+ONLINE_LOST,Connection lost.,Verbinding verbroken.
+ONLINE_DESYNC,The screens got out of step. Match stopped.,De schermen liepen uit de pas. Potje gestopt.
+MENU_BALL,Beach ball,Strandbal
+BALL_YOUR_TEAM,You play for blue!,Jij speelt bij blauw!
+BALL_SCORE,Blue {blue} – {orange} Orange,Blauw {blue} – {orange} Oranje
+BALL_GOAL,Goal!,Doelpunt!
+BALL_GOLDEN,Golden goal: next goal wins!,"Gouden goal: wie scoort, wint!"
+BALL_GOLDEN_SHORT,Golden goal,Gouden goal
+BALL_WON,Your team wins!,Jouw team wint!
+BALL_DRAW,A draw,Gelijkspel
+BALL_LOST,The other team wins,Het andere team wint
+RESULT_BALL_GOALS,Your goals: {count},Jouw doelpunten: {count}
+BALL_YOU_SCORED,You scored!,Jij scoort!
+BALL_GOAL_AGAINST,Goal for the other team,Doelpunt voor de tegenpartij
+BALL_YOUR_TEAM_ORANGE,You play for orange!,Jij speelt bij oranje!
+ONLINE_TITLE_BALL,Beach ball online,Strandbal online
+ONLINE_SWITCH_BALL,Play beach ball instead,Liever strandbal
+ONLINE_SWITCH_NORMAL,Play Getij instead,Liever Getij

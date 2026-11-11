@@ -1,0 +1,30 @@
+[
+  {
+    "seed": 1,
+    "ticks": 1800,
+    "hash": 1303184025,
+    "alive": 3,
+    "level": 4
+  },
+  {
+    "seed": 2026,
+    "ticks": 3600,
+    "hash": 3606751907,
+    "alive": 2,
+    "level": 6
+  },
+  {
+    "seed": 31337,
+    "ticks": 6000,
+    "hash": 1975671350,
+    "alive": 1,
+    "level": 9
+  },
+  {
+    "seed": 4242,
+    "ticks": 3000,
+    "hash": 3267944416,
+    "alive": 6,
+    "level": 5
+  }
+]

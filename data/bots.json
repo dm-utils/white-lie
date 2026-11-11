@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "levels": {
+    "easy":   { "think_ticks": 12, "aim_error": 300, "aggression_pct": 40, "samples": 10, "look_tiles": 7, "damage_pct": 55 },
+    "normal": { "think_ticks": 9,  "aim_error": 180, "aggression_pct": 60, "samples": 12, "look_tiles": 8, "damage_pct": 80 },
+    "hard":   { "think_ticks": 6,  "aim_error": 90,  "aggression_pct": 80, "samples": 14, "look_tiles": 9, "damage_pct": 100 }
+  },
+  "default_level": "easy",
+  "names": {
+    "adjectives": ["Swift", "Brave", "Sneaky", "Sunny", "Salty", "Bouncy", "Sleepy", "Mighty", "Lucky", "Fizzy", "Jolly", "Daring"],
+    "nouns": ["Otter", "Gull", "Crab", "Squid", "Seal", "Clam", "Puffer", "Starfish", "Shrimp", "Pelican", "Turtle", "Urchin"]
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "outline": "#2B3A4A",
+  "eye": "#FFFFFF",
+  "pupil": "#2B3A4A",
+  "world": {
+    "team_blue": "3F8CFF",
+    "team_orange": "FF8A3D",
+    "sand_high": "#F5DCA9",
+    "sand": "#F2D49B",
+    "sand_shade": "#E5C384",
+    "wet_sand": "#C9A26B",
+    "shallow": "#5FD3C9",
+    "deep": "#1F6F9F",
+    "abyss": "#134A6E",
+    "foam": "#F7FBF8",
+    "grass": "#9DBF5A",
+    "grass_shade": "#7FA244",
+    "ink": "#2A1F3D"
+  },
+  "animals": {
+    "crab": {
+      "base": "#F28C38",
+      "shade": "#D9702A",
+      "accent": "#FFB27A",
+      "detail": "#2B3A4A"
+    },
+    "octopus": {
+      "base": "#9B6BD6",
+      "shade": "#7E52BA",
+      "accent": "#C9A9F0",
+      "detail": "#2B3A4A"
+    },
+    "gull": {
+      "base": "#FFFFFF",
+      "shade": "#DCE3EA",
+      "accent": "#B7C3CE",
+      "beak": "#FFC530",
+      "legs": "#F2A93B",
+      "detail": "#2B3A4A"
+    }
+  },
+  "looks": {
+    "crab_sunset": {
+      "animal": "crab",
+      "base": "#FF6F61",
+      "shade": "#E04F45",
+      "accent": "#FFC3A0"
+    },
+    "octopus_midnight": {
+      "animal": "octopus",
+      "base": "#3B4BA8",
+      "shade": "#2A3780",
+      "accent": "#8FA0FF"
+    },
+    "crab_storm": {
+      "animal": "crab",
+      "base": "#5E7A8C",
+      "shade": "#455E6E",
+      "accent": "#BFD6E3"
+    },
+    "octopus_storm": {
+      "animal": "octopus",
+      "base": "#4F6B7A",
+      "shade": "#3A5260",
+      "accent": "#9FE3F0"
+    },
+    "gull_storm": {
+      "animal": "gull",
+      "base": "#C9D3DC",
+      "shade": "#9AA8B5",
+      "accent": "#6E7F8F",
+      "beak": "#F2C14E"
+    }
+  }
+}

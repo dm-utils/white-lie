@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "pearls_for_place": [0, 60, 45, 35, 25, 18, 12],
+  "pearls_per_knockout": 10,
+  "pearls_per_goal": 10,
+  "rewards": [
+    { "at": 100,  "kind": "avatar", "id": "shell",          "name_key": "REWARD_SHELL_AVATAR" },
+    { "at": 250,  "kind": "animal", "id": "puffer",         "name_key": "ANIMAL_PUFFER" },
+    { "at": 400,  "kind": "badge",  "id": "beachcomber",    "name_key": "REWARD_BEACHCOMBER" },
+    { "at": 600,  "kind": "look",   "id": "crab_sunset",    "name_key": "REWARD_SUNSET_PINCH" },
+    { "at": 850,  "kind": "animal", "id": "otter",          "name_key": "ANIMAL_OTTER" },
+    { "at": 1100, "kind": "avatar", "id": "wave",           "name_key": "REWARD_WAVE_AVATAR" },
+    { "at": 1400, "kind": "animal", "id": "seal",           "name_key": "ANIMAL_SEAL" },
+    { "at": 1750, "kind": "look",   "id": "octopus_midnight", "name_key": "REWARD_MIDNIGHT_INKA" },
+    { "at": 2100, "kind": "animal", "id": "hermit",         "name_key": "ANIMAL_HERMIT" },
+    { "at": 2500, "kind": "badge",  "id": "tide_master",    "name_key": "REWARD_TIDE_MASTER" },
+    { "at": 3000, "kind": "animal", "id": "star",           "name_key": "ANIMAL_STAR" }
+  ]
+}

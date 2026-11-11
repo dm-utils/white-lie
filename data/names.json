@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "_note": "Player names: adjective + noun + number. The server stores only the list positions, so never reorder or remove entries; only append (names would change).",
+  "adjectives": [
+    "SWIFT",
+    "BRAVE",
+    "SNEAKY",
+    "SUNNY",
+    "SALTY",
+    "BOUNCY",
+    "SLEEPY",
+    "MIGHTY",
+    "LUCKY",
+    "FIZZY",
+    "JOLLY",
+    "DARING"
+  ],
+  "nouns": [
+    "OTTER",
+    "GULL",
+    "CRAB",
+    "SQUID",
+    "SEAL",
+    "CLAM",
+    "PUFFER",
+    "STARFISH",
+    "SHRIMP",
+    "PELICAN",
+    "TURTLE",
+    "URCHIN"
+  ]
+}

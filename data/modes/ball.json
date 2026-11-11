@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "_note": "Strandbal (phase 14): overrides on top of rules.json (deep merge) plus the ball. Units as in rules.json: milli-tiles, ticks (30/s), per mille for friction.",
+  "rules": {
+    "island": "strand",
+    "tide": {
+      "start_level": 2,
+      "max_level": 6,
+      "phase_ticks": 900,
+      "warn_ticks": 75,
+      "sudden_death_extra_pct": 0
+    },
+    "snacks": {
+      "max": 4,
+      "start": 4,
+      "respawn_ticks": 240
+    },
+    "calm_start_ticks": 0,
+    "ball": {
+      "radius": 380,
+      "max_speed": 900,
+      "bounce_pct": 70,
+      "friction": { "dry": 955, "shallow": 900, "deep": 975 },
+      "deep_drift": 6,
+      "dribble_pct": 140,
+      "shot": { "snip": 700, "fan": 300, "long": 460, "dash": 860, "dive": 760 },
+      "respawn_ticks": 90,
+      "damage_pct": 65,
+      "kickoff_ticks": 60,
+      "match_ticks": 5400,
+      "goals_to_win": 5,
+      "golden_ticks": 1800
+    }
+  }
+}

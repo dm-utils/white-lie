@@ -1,0 +1,60 @@
+; Engine configuration file.
+; Godot 4.7.2 (pinned). Keep the same version on every machine and in CI.
+
+config_version=5
+
+[application]
+
+config/name="Verstoppertje"
+config/version="0.1.0"
+run/main_scene="res://ui/boot_screen.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://icon.svg"
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0.498, 0.847, 0.941, 1)
+
+[autoload]
+
+Boot="*res://boot/boot.gd"
+St33f="*res://addons/st33f/st33f.gd"
+Platform="*res://platform/platform.gd"
+Sfx="*res://audio/sfx.gd"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=0
+
+[debug]
+
+gdscript/warnings/integer_division=0
+
+[gui]
+
+timers/tooltip_delay_sec.mobile=3600.0
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://i18n/strings.en.translation", "res://i18n/strings.nl.translation")
+locale/fallback="en"
+
+[physics]
+
+common/max_physics_steps_per_frame=3
+common/physics_ticks_per_second=30
+
+[st33f]
+
+game="verstoppertje"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.498, 0.847, 0.941, 1)

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "_note": "Mastery per animal (FO 7): tiers need both matches and wins with that animal. Show only, never power.",
+  "tiers": [
+    {
+      "id": "bronze",
+      "matches": 5,
+      "wins": 0
+    },
+    {
+      "id": "silver",
+      "matches": 25,
+      "wins": 5
+    },
+    {
+      "id": "gold",
+      "matches": 75,
+      "wins": 20
+    }
+  ]
+}

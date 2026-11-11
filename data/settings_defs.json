@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "rule": "Settings switch events, banners and looks. Never sell or gate gameplay (free-to-play rule).",
+  "defs": [
+    { "key": "event_banner", "type": "string", "default": "", "description": "Short banner text on the main menu (empty = no banner)" },
+    { "key": "show_daily", "type": "bool", "default": true, "description": "Show the Daily Challenge button on the main menu" },
+    { "key": "season_theme", "type": "string", "default": "summer", "description": "Cosmetic theme of the menus (summer, storm, ...)" }
+  ]
+}

@@ -1,0 +1,79 @@
+# Replay check for the leaderboards (phase 7c): plays every pending score again with the real Godot sim and sends
+# a verdict back. Free by design (owner decision 2026-11-10): once a day, plus by hand; it stops right away when
+# nothing waits, so a quiet day costs one billed minute. The deploy key never reaches Godot: curl does the network.
+name: Verify scores
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: verify-scores
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: "4.7.2"
+  # from https://github.com/godotengine/godot/releases/download/4.7.2-stable/SHA512-SUMS.txt
+  GODOT_SHA512_EDITOR: 9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65
+  BASE: https://st33f-leaderboards-dev.st33fd3v.workers.dev/v1/games/getij
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DEPLOY_KEY: ${{ secrets.ST33F_DEPLOY_KEY_DEV }}
+    steps:
+      - name: Anything waiting?
+        id: peek
+        run: |
+          if [ -z "$DEPLOY_KEY" ]; then echo "::error::ST33F_DEPLOY_KEY_DEV is not set"; exit 1; fi
+          n=$(curl -sf -H "X-Deploy-Key: $DEPLOY_KEY" "$BASE/pending?limit=1" | python3 -c "import json,sys; print(len(json.load(sys.stdin)['scores']))")
+          echo "waiting=$n" >> "$GITHUB_OUTPUT"
+          echo "pending scores: $n (at least)"
+
+      - uses: actions/checkout@v6
+        if: steps.peek.outputs.waiting != '0'
+
+      - name: Cache Godot ${{ env.GODOT_VERSION }}
+        if: steps.peek.outputs.waiting != '0'
+        id: godot-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/godot-editor
+          key: godot-editor-${{ env.GODOT_VERSION }}-${{ env.GODOT_SHA512_EDITOR }}
+
+      - name: Download Godot (SHA-512 checked)
+        if: steps.peek.outputs.waiting != '0' && steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot-editor && cd ~/godot-editor
+          f="Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          curl -sSfLO "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/$f"
+          echo "${GODOT_SHA512_EDITOR}  $f" | sha512sum -c -
+          unzip -q "$f" && rm -f "$f"
+
+      - name: Import project
+        if: steps.peek.outputs.waiting != '0'
+        run: timeout 600 ~/godot-editor/Godot_v${GODOT_VERSION}-stable_linux.x86_64 --headless --path . --import
+
+      - name: Play the pending scores again and send the verdicts
+        if: steps.peek.outputs.waiting != '0'
+        run: |
+          godot=~/godot-editor/Godot_v${GODOT_VERSION}-stable_linux.x86_64
+          total=0
+          for round in 1 2 3 4 5; do
+            curl -sf -H "X-Deploy-Key: $DEPLOY_KEY" "$BASE/pending?limit=100" > "$RUNNER_TEMP/pending.json"
+            n=$(python3 -c "import json; print(len(json.load(open('$RUNNER_TEMP/pending.json'))['scores']))")
+            [ "$n" = "0" ] && break
+            timeout 600 "$godot" --headless --path . res://tools/verify/verify_scores.tscn -- \
+              --in="$RUNNER_TEMP/pending.json" --out="$RUNNER_TEMP/verdicts.json" | tee -a "$GITHUB_STEP_SUMMARY"
+            curl -sf -X POST -H "Content-Type: application/json" -H "X-Deploy-Key: $DEPLOY_KEY" \
+              --data @"$RUNNER_TEMP/verdicts.json" "$BASE/verdicts"
+            echo
+            total=$((total + n))
+          done
+          echo "checked $total scores" | tee -a "$GITHUB_STEP_SUMMARY"

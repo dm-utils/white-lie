@@ -1,0 +1,200 @@
+# CI: tests and builds on the main branches only (minutes add up), superseded runs cancelled,
+# artifacts kept 7 days. iOS/macOS builds will be manual-only (macOS minutes cost ~10x).
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: "4.7.2"
+  # from https://github.com/godotengine/godot/releases/download/4.7.2-stable/SHA512-SUMS.txt
+  GODOT_SHA512_EDITOR: 9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65
+  GODOT_SHA512_TEMPLATES: ca4d71c4d7b81dfc15d1a98baa07534aa95b03fdda78a0075b06672e1648d2e5f40980c9adc28d23e1b92e732ee7bf3461997aa804af74ec2fcd7a93ccb84079
+  GITLEAKS_VERSION: "8.30.1"
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache Godot ${{ env.GODOT_VERSION }}
+        id: godot-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-${{ env.GODOT_SHA512_EDITOR }}
+
+      - name: Download Godot (SHA-512 checked)
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot && cd ~/godot
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          curl -sSfLO "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          curl -sSfLO "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          echo "${GODOT_SHA512_EDITOR}  Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip" | sha512sum -c -
+          echo "${GODOT_SHA512_TEMPLATES}  Godot_v${GODOT_VERSION}-stable_export_templates.tpz" | sha512sum -c -
+          unzip -q "Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q "Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          rm -f ./*.zip ./*.tpz
+
+      - name: Install Godot
+        run: |
+          sudo ln -sf ~/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64 /usr/local/bin/godot
+          mkdir -p ~/.local/share/godot/export_templates
+          ln -sfn ~/godot/templates ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          godot --version
+
+      - name: Sound effects (synthesised, Ogg Vorbis, loudness checked with ebur128)
+        run: |
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg)
+          python3 -I tools/audio/sfx.py --ffmpeg ffmpeg | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Import project
+        run: timeout 600 godot --headless --path . --import
+
+      - name: Tests
+        run: timeout 300 godot --headless --path . res://tests/run_tests.tscn -- --no-crash-reports --no-network
+
+      - name: Replay check runs headless on Linux (sample written by the tests)
+        run: |
+          out=$(timeout 300 godot --headless --path . res://tools/verify/verify_scores.tscn -- \
+            --in="$HOME/.local/share/godot/app_userdata/Getij/verify_sample.json" --out="$RUNNER_TEMP/verdicts.json")
+          echo "$out"
+          echo "$out" | grep -q "4 scores, 1 verified, 3 rejected"
+
+      - name: Push setting declarations to the dev platform (develop only, needs the deploy key)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        env:
+          DEPLOY_KEY: ${{ secrets.ST33F_DEPLOY_KEY_DEV }}
+        run: |
+          if [ -z "$DEPLOY_KEY" ]; then echo "::notice::ST33F_DEPLOY_KEY_DEV not set yet (OWNER_TASKS 5); skipping"; exit 0; fi
+          curl -sf -X PUT -H "Content-Type: application/json" -H "X-Deploy-Key: $DEPLOY_KEY" \
+            --data @data/settings_defs.json https://st33f-accounts-dev.st33fd3v.workers.dev/v1/games/getij/settings/defs
+
+      - name: Push the score rules to the dev leaderboards (develop only, needs the deploy key)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        env:
+          DEPLOY_KEY: ${{ secrets.ST33F_DEPLOY_KEY_DEV }}
+        run: |
+          if [ -z "$DEPLOY_KEY" ]; then echo "::notice::ST33F_DEPLOY_KEY_DEV not set yet; skipping"; exit 0; fi
+          python3 -c "import json; r = json.load(open('data/rules.json')); print(json.dumps({'score': r['score'], 'limits': r['limits']}))" > "$RUNNER_TEMP/rules.json"
+          curl -sf -X PUT -H "Content-Type: application/json" -H "X-Deploy-Key: $DEPLOY_KEY" \
+            --data @"$RUNNER_TEMP/rules.json" https://st33f-leaderboards-dev.st33fd3v.workers.dev/v1/games/getij/rules
+
+      - name: Tool tests (translation sync)
+        run: python3 -I tools/test_i18n_sync.py
+
+      - name: Generated art is up to date (art comes from scripts; never edit the output by hand)
+        run: |
+          python3 -I tools/art/animals.py
+          git diff --exit-code -- assets/animals assets/looks data/rigs
+          python3 -I tools/art/tiles.py --check
+
+      - name: Translations — push the source (develop), pull reviewed Final texts into this build
+        env:
+          I18N_URL: https://st33f-i18n-dev.st33fd3v.workers.dev
+          I18N_CLIENT_ID: ${{ secrets.I18N_ACCESS_CLIENT_ID }}
+          I18N_CLIENT_SECRET: ${{ secrets.I18N_ACCESS_CLIENT_SECRET }}
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/develop" ]; then python3 -I tools/i18n_sync.py push; fi
+          python3 -I tools/i18n_sync.py pull
+          # the CSV may have changed: re-import so the .translation files carry the Final texts
+          timeout 600 godot --headless --path . --import
+
+      - name: Export Web and Windows
+        run: |
+          mkdir -p build/web build/windows build/android && touch build/.gdignore
+          timeout 600 godot --headless --path . --export-release "Web" build/web/index.html
+          # debug web build only for the smoke test (debug flags: fast tide, god mode, fps log)
+          mkdir -p build/web-debug && timeout 600 godot --headless --path . --export-debug "Web" build/web-debug/index.html
+          timeout 600 godot --headless --path . --export-release "Windows" build/windows/Getij.exe
+
+      - name: Pre-compress web build (brotli)
+        run: |
+          sudo apt-get install -y -qq brotli >/dev/null
+          brotli -q 11 -k build/web/*.wasm build/web/*.pck build/web/*.js
+          echo "### Web build size" >> "$GITHUB_STEP_SUMMARY"
+          ls -la build/web | awk '{print "    " $5 "  " $9}' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Budgets (styleguide section 10)
+        run: |
+          echo "### Budgets" >> "$GITHUB_STEP_SUMMARY"
+          python3 -I tools/check_budgets.py build/web | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Web smoke test (frames must keep coming)
+        run: |
+          # a venv: `python -I` ignores user site-packages, so a --user install would be invisible
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q playwright
+          "$RUNNER_TEMP/venv/bin/python" -m playwright install --with-deps chromium >/dev/null
+          mkdir -p build/shots
+          "$RUNNER_TEMP/venv/bin/python" -I tools/web_smoke.py build/web-debug build/shots
+
+      - name: Contact sheet of the screenshots
+        if: always()
+        run: mkdir -p build/shots && python3 -I tools/contact_sheet.py build/shots "Getij — ${GITHUB_REF_NAME}"
+
+      - name: Android debug build
+        run: |
+          sudo update-alternatives --set java /usr/lib/jvm/temurin-17-jdk-amd64/bin/java || true
+          export JAVA_HOME=${JAVA_HOME_17_X64}
+          keytool -genkeypair -v -keystore "$RUNNER_TEMP/debug.keystore" -storepass android -alias androiddebugkey \
+            -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" >/dev/null 2>&1
+          mkdir -p ~/.config/godot
+          for f in editor_settings-4.tres "editor_settings-${GODOT_VERSION%.*}.tres"; do
+            printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\n' \
+              "$ANDROID_SDK_ROOT" "$JAVA_HOME" > ~/.config/godot/$f
+          done
+          export GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$RUNNER_TEMP/debug.keystore"
+          export GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey
+          export GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android
+          timeout 600 godot --headless --path . --export-debug "Android" build/android/getij-debug.apk
+          ls -la build/android
+
+      - name: Scan build snapshot for secrets
+        run: |
+          cd "$RUNNER_TEMP"
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          curl -sSfLO "$base/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfLO "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          sha256sum -c --ignore-missing "gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          tar -xzf "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" gitleaks
+          cd "$GITHUB_WORKSPACE"
+          "$RUNNER_TEMP/gitleaks" dir build --no-banner --redact
+          "$RUNNER_TEMP/gitleaks" git . --no-banner --redact
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: web
+          path: build/web
+          retention-days: 7
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows
+          path: build/windows
+          retention-days: 7
+      - uses: actions/upload-artifact@v7
+        with:
+          name: android-debug
+          path: build/android/*.apk
+          retention-days: 7
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: smoke-shots
+          path: build/shots
+          retention-days: 7
+          if-no-files-found: ignore
