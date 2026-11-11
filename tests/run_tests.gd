@@ -1068,16 +1068,16 @@ func test_hide_sim() -> void:
 	var seekers: Array = []
 	for r in 3:
 		seekers.append(range(6).filter(func(i): return s.role_for(i, r) == HideSim.SEEKER))
-	check(seekers == [[0, 3], [2, 5], [1, 4]], "2 seekers per round and every seat seeks once: %s" % str(seekers))
-	check(s.phase == HideSim.PHASE_HIDE and s.ents[0].role == HideSim.SEEKER, "the session starts hiding; seat 0 seeks first")
+	check(seekers == [[2, 5], [1, 4], [0, 3]], "2 seekers per round and every seat seeks once: %s" % str(seekers))
+	check(s.phase == HideSim.PHASE_HIDE and s.ents[0].role == HideSim.HIDER, "the session starts hiding; the player (seat 0) hides first")
 	var idle: Array = []
 	for i in 6:
 		idle.append({})
 	# seekers can't move while the others hide
-	var seeker: HideSim.Ent = s.ents[0]
+	var seeker: HideSim.Ent = s.ents[2]
 	var sx := seeker.x
 	var go := idle.duplicate(true)
-	go[0] = {"m": 0}
+	go[2] = {"m": 0}
 	s.step(go)
 	check(seeker.x == sx, "a seeker is frozen in the office during the hide phase")
 	# disguise: a hider next to a prop turns into that kind; standing still makes it look like one
@@ -1111,9 +1111,9 @@ func test_hide_sim() -> void:
 	seeker.y = hider.y
 	seeker.cooldown = 0
 	var tap := idle.duplicate(true)
-	tap[0] = {"a": 0, "sd": 1000}
+	tap[2] = {"a": 0, "sd": 1000}
 	s.step(tap)
-	check(hider.role == HideSim.GULL and hider.found_by == 0 and seeker.points == int(s.rules.points.seeker_find), "a tap on the hider: found, it becomes a gull, the seeker scores")
+	check(hider.role == HideSim.GULL and hider.found_by == 2 and seeker.points == int(s.rules.points.seeker_find), "a tap on the hider: found, it becomes a gull, the seeker scores")
 	var other: Array = s.props[0]
 	for p in s.props:
 		if s.walkable(p[1] - 1000, p[2]) and Fx.dist(p[1] - hider.x, p[2] - hider.y) > 3000 and not s.ents.any(func(e): return e.role == HideSim.HIDER and Fx.dist(e.x - p[1], e.y - p[2]) < 1500):

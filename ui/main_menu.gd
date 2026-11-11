@@ -186,4 +186,4 @@ func _play_daily() -> void:
 
 
 func _play() -> void:
-	Daily.start_normal(get_tree())
+	get_tree().change_scene_to_file(Boot.SCENES["hide"]) # Verstoppertje against bots (phase 3)

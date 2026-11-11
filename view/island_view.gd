@@ -12,12 +12,12 @@ const ATLAS := preload("res://assets/island/atlas.png")
 
 var tile_px := 80.0
 var shown_level := 0.0
-var _sim: MatchSim
+var _sim # MatchSim, or anything with width, height, heights, level, phase_left, finished and rules.tide
 var _mat: ShaderMaterial
 
 
 ## Builds the material for a sim; call once before adding to the tree.
-func setup(sim: MatchSim, px_per_tile: float) -> IslandView:
+func setup(sim, px_per_tile: float) -> IslandView:
 	_sim = sim
 	tile_px = px_per_tile
 	shown_level = float(sim.level)
@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
 
 func _apply() -> void:
 	var t: Dictionary = _sim.rules.tide
-	var warn := _sim.phase_left <= int(t.warn_ticks) and _sim.level < int(t.max_level) and not _sim.finished
+	var warn: bool = _sim.phase_left <= int(t.warn_ticks) and _sim.level < int(t.max_level) and not _sim.finished
 	_mat.set_shader_parameter("level", shown_level)
 	_mat.set_shader_parameter("warn", 1.0 if warn else 0.0)
 

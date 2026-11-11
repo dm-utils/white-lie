@@ -12,6 +12,7 @@ const SCENES := {
 	"leaderboard": "res://ui/leaderboard_screen.tscn",
 	"collection": "res://ui/collection_screen.tscn",
 	"online": "res://ui/online_screen.tscn",
+	"hide": "res://view/hide_view.tscn",
 }
 
 var args: Dictionary = {}

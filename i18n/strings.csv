@@ -261,3 +261,18 @@ PROP_ANCHOR,Anchor,Anker
 PROP_POT,Lobster pot,Kreeftenfuik
 PROP_ROPE,Coil of rope,Rol touw
 PROP_BOLLARD,Bollard,Bolder
+HIDE_ROLE_HIDER,Hide! Become something in the harbour,Verstop je! Word iets in de haven
+HIDE_ROLE_SEEKER,You seek! Wait in the office…,Jij zoekt! Wacht in het kantoor…
+HIDE_ROLE_SHORT_HIDER,Hider,Verstopper
+HIDE_ROLE_SHORT_SEEKER,Seeker,Zoeker
+HIDE_ROLE_SHORT_GULL,Gull,Meeuw
+HIDE_SEEK_START,"Ready or not, here they come!","Wie niet weg is, is gezien!"
+HIDE_YOU_FOUND,Found! You fly on as a gull,Gevonden! Je vliegt verder als meeuw
+HIDE_GOT_ONE,Got one!,Gevonden!
+HIDE_MISS,Just a prop…,Gewoon een voorwerp…
+HIDE_REVEAL,Time! This is where everyone was,Tijd! Hier stond iedereen
+HIDE_FOUND,Found {found}/{total},Gevonden {found}/{total}
+HIDE_ROUND,Round {round}/{rounds},Ronde {round}/{rounds}
+HIDE_POINTS,{points} pts,{points} ptn
+HIDE_WAIT_DARK,The others are hiding… {seconds},De anderen verstoppen zich… {seconds}
+HIDE_CONTROLS_KEYS,WASD walk · Space disguise / tap · or click a prop,WASD lopen · Spatie vermommen / tikken · of klik op een voorwerp

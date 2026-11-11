@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "_note": "Verstoppertje rules (phase 2). Units: milli-tiles, ticks (30/s). Seats: seat s seeks in round r when (s + r) % 3 == 0.",
+  "_note": "Verstoppertje rules (phase 2). Units: milli-tiles, ticks (30/s). Seats: seat s seeks in round r when (s + r) % 3 == 2 (seat 0 = the player hides first).",
   "tick_rate": 30,
   "players": 6,
   "map": "haven",

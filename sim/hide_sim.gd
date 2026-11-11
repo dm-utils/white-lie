@@ -135,7 +135,7 @@ func walkable(x: int, y: int) -> bool:
 
 
 func role_for(seat: int, r: int) -> int:
-	return SEEKER if (seat + r) % 3 == 0 else HIDER
+	return SEEKER if (seat + r) % 3 == 2 else HIDER # the player (seat 0) hides first, seeks in the last round
 
 
 func hiders_left() -> int:
