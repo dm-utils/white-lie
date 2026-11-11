@@ -1,6 +1,6 @@
 class_name HideBrain
 extends RefCounted
-## Verstoppertje bots (phase 2). Same rules as Getij's BotBrain: they run inside the sim tick with the sim's RNG and
+## White Lie bots (phase 2). Same rules as Getij's BotBrain: they run inside the sim tick with the sim's RNG and
 ## keep their memory on the entity, so they are deterministic. They play fair: a seeker bot only uses what a person
 ## could see (fresh tells, plain animals) plus a small chance to try a random prop.
 

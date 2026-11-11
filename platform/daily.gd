@@ -26,7 +26,7 @@ static func countdown(unix: float) -> String:
 ## Fallback seed from the date alone (FNV-1a over the text, so it is the same on every platform and version).
 static func local_seed(day: String) -> int:
 	var h := 2166136261
-	for b in ("verstoppertje-daily-" + day).to_utf8_buffer():
+	for b in ("white-lie-daily-" + day).to_utf8_buffer():
 		h = ((h ^ b) * 16777619) & 0xFFFFFFFF
 	return h % 2000000000 + 1
 

@@ -1,6 +1,6 @@
 class_name HideSim
 extends RefCounted
-## The rules of Verstoppertje (phase 2): pure, deterministic, integer-only, like MatchSim in Getij.
+## The rules of White Lie (phase 2): pure, deterministic, integer-only, like MatchSim in Getij.
 ## Input: one command per seat per tick ({m: move angle, a: action angle, s: gadget angle, sd: distance}; -1 = none).
 ## Action = disguise as the nearest prop in that direction (hider) or tap the nearest thing there (seeker).
 ## A session is 3 rounds; every round: hide (seekers frozen in the office) -> seek -> reveal. Roles follow from the

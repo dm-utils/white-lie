@@ -3,7 +3,7 @@ extends Node
 ## Exit code 1 on any failure, so CI fails.
 ##   godot --headless --path . res://tests/run_tests.tscn
 
-const LOCAL_SEED_2026_11_10 := 1088332463 # FNV-1a over "verstoppertje-daily-2026-11-10", computed independently in Python
+const LOCAL_SEED_2026_11_10 := 1181249052 # FNV-1a over "white-lie-daily-2026-11-10", computed independently in Python
 const LocalBackend := preload("res://platform/local_backend.gd")
 const BootScript := preload("res://boot/boot.gd")
 const ContentScript := preload("res://sim/content.gd")
@@ -621,7 +621,7 @@ func test_names_mastery_profiles() -> void:
 ## "Download my data": signed out it holds what is on this device; the file is written where the player finds it.
 func test_my_data() -> void:
 	var data: Dictionary = await MyData.gather()
-	check(data.device is Dictionary and data.platform == null and data.game == "verstoppertje", "signed out: the device profile, no platform part")
+	check(data.device is Dictionary and data.platform == null and data.game == "white-lie", "signed out: the device profile, no platform part")
 	var text := JSON.stringify(data, "  ")
 	check(not text.contains("cs1_"), "no session token in the export")
 	var path := MyData.save(text)
@@ -1061,7 +1061,7 @@ func test_ball_mode() -> void:
 	check(bal.avg_goals >= 1.0 and bal.avg_goals <= 8.0 and bal.nil_pct <= 40.0, "bots score in Strandbal (%.1f goals per match)" % bal.avg_goals)
 
 
-## Verstoppertje (phase 2): roles, freezing, disguise, tells, taps, rounds, determinism, rollback, balance.
+## White Lie (phase 2): roles, freezing, disguise, tells, taps, rounds, determinism, rollback, balance.
 func test_hide_sim() -> void:
 	var m := HideMatch.create(21, "crab", 6, "normal")
 	var s := m.sim
@@ -1149,7 +1149,7 @@ func test_hide_sim() -> void:
 	for i in 2500:
 		a.step()
 		b.step()
-	check(a.sim.state_hash() == b.sim.state_hash(), "Verstoppertje: same seed -> same state")
+	check(a.sim.state_hash() == b.sim.state_hash(), "White Lie: same seed -> same state")
 	var snap := a.sim.snapshot()
 	for i in 1500:
 		a.step()
@@ -1157,7 +1157,7 @@ func test_hide_sim() -> void:
 	c.sim.restore(snap)
 	for i in 1500:
 		c.step()
-	check(a.sim.state_hash() == c.sim.state_hash(), "Verstoppertje: snapshot + restore continues identically")
+	check(a.sim.state_hash() == c.sim.state_hash(), "White Lie: snapshot + restore continues identically")
 
 	# rollback: 4 screens with lag end identical to a reference run with all input known
 	var n := 4
@@ -1197,9 +1197,9 @@ func test_hide_sim() -> void:
 			cmds[st] = inputs[st][t]
 		ref.step_many(cmds)
 	var rbs: int = clients.reduce(func(acc, cl): return acc + cl.rollbacks, 0)
-	check(hashes.all(func(h): return h == ref.sim.state_hash()), "Verstoppertje rollback: 4 screens with lag end identical to the reference (%d rollbacks)" % rbs)
-	check(rbs > 0, "Verstoppertje rollback: predictions really were corrected")
+	check(hashes.all(func(h): return h == ref.sim.state_hash()), "White Lie rollback: 4 screens with lag end identical to the reference (%d rollbacks)" % rbs)
+	check(rbs > 0, "White Lie rollback: predictions really were corrected")
 
 	var bal := HideBalanceRunner.run(6, "normal", 3)
 	print("hide: light balance, 6 sessions: %.2f of 4 found per round" % bal.avg_found)
-	check(bal.avg_found >= 1.0 and bal.avg_found <= 3.6, "bots find hiders in Verstoppertje (%.2f per round)" % bal.avg_found)
+	check(bal.avg_found >= 1.0 and bal.avg_found <= 3.6, "bots find hiders in White Lie (%.2f per round)" % bal.avg_found)

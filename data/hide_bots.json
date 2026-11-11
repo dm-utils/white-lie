@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "_note": "Verstoppertje bots: think_ticks = reaction time, sight in milli-tiles, guess_pct = chance to tap a random prop when next to it, flee_pct = hider moves when a seeker is close, samples = spots a hider compares, notice_pm = per mille per think that a seeker sees a disguised hider in sight as \"new\".",
+  "_note": "White Lie bots: think_ticks = reaction time, sight in milli-tiles, guess_pct = chance to tap a random prop when next to it, flee_pct = hider moves when a seeker is close, samples = spots a hider compares, notice_pm = per mille per think that a seeker sees a disguised hider in sight as \"new\".",
   "levels": {
     "easy":   { "think_ticks": 14, "sight": 5000, "guess_pct": 10, "flee_pct": 25, "samples": 6, "notice_pm": 4 },
     "normal": { "think_ticks": 10, "sight": 6500, "guess_pct": 18, "flee_pct": 15, "samples": 10, "notice_pm": 9 },

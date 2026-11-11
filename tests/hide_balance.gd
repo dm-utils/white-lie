@@ -1,6 +1,6 @@
 class_name HideBalanceRunner
 extends Node
-## Verstoppertje balance runner (phase 2): many all-bot sessions headless, then hiders found per round.
+## White Lie balance runner (phase 2): many all-bot sessions headless, then hiders found per round.
 ##   godot --headless --path . res://tests/hide_balance.tscn -- --sessions=60 --level=normal --seed=1
 ## Goals: 2-3 of 4 hiders found per round on average, under 15 % of rounds with nobody found, under 15 % with all
 ## found within 60 s. Exit code 1 when outside (unless --report=1).

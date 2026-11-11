@@ -5,7 +5,7 @@ config_version=5
 
 [application]
 
-config/name="Verstoppertje"
+config/name="White Lie"
 config/version="0.1.0"
 run/main_scene="res://ui/boot_screen.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
@@ -50,7 +50,7 @@ common/physics_ticks_per_second=30
 
 [st33f]
 
-game="verstoppertje"
+game="white-lie"
 
 [rendering]
 
