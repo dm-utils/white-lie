@@ -11,7 +11,7 @@ const MAX_ROLLBACK := 30 # ticks (1 s): further behind than this we wait instead
 const NONE := [-1, -1, -1, -1]
 const HASH_EVERY := 60 # ticks: a settled hash every 2 s goes to the relay (desync check)
 
-var m: Match
+var m # Match (Getij) or HideMatch: anything with sim, humans, step_many and to_bot
 var me := 0
 var delay := 2
 var tick := 0 # the next tick to play
@@ -30,7 +30,7 @@ var _leave := {} # slot -> tick from which a bot plays that seat
 var _hash := {} # tick -> state hash after playing it (final once the tick is settled)
 
 
-func _init(match_: Match, my_slot: int, input_delay := 2) -> void:
+func _init(match_, my_slot: int, input_delay := 2) -> void:
 	m = match_
 	me = my_slot
 	delay = input_delay

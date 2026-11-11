@@ -45,6 +45,7 @@ func _ready() -> void:
 	test_rollback()
 	test_online_protocol()
 	test_ball_mode()
+	test_hide_sim()
 	print("tests: %d passed, %d failed" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
 
@@ -1058,3 +1059,147 @@ func test_ball_mode() -> void:
 	var bal := BallBalanceRunner.run(8, "normal", 11)
 	print("ball: light balance, 8 matches: %.1f goals per match, 0-0 %.0f %%" % [bal.avg_goals, bal.nil_pct])
 	check(bal.avg_goals >= 1.0 and bal.avg_goals <= 8.0 and bal.nil_pct <= 40.0, "bots score in Strandbal (%.1f goals per match)" % bal.avg_goals)
+
+
+## Verstoppertje (phase 2): roles, freezing, disguise, tells, taps, rounds, determinism, rollback, balance.
+func test_hide_sim() -> void:
+	var m := HideMatch.create(21, "crab", 6, "normal")
+	var s := m.sim
+	var seekers: Array = []
+	for r in 3:
+		seekers.append(range(6).filter(func(i): return s.role_for(i, r) == HideSim.SEEKER))
+	check(seekers == [[0, 3], [2, 5], [1, 4]], "2 seekers per round and every seat seeks once: %s" % str(seekers))
+	check(s.phase == HideSim.PHASE_HIDE and s.ents[0].role == HideSim.SEEKER, "the session starts hiding; seat 0 seeks first")
+	var idle: Array = []
+	for i in 6:
+		idle.append({})
+	# seekers can't move while the others hide
+	var seeker: HideSim.Ent = s.ents[0]
+	var sx := seeker.x
+	var go := idle.duplicate(true)
+	go[0] = {"m": 0}
+	s.step(go)
+	check(seeker.x == sx, "a seeker is frozen in the office during the hide phase")
+	# disguise: a hider next to a prop turns into that kind; standing still makes it look like one
+	var hider: HideSim.Ent = s.ents[1]
+	var prop: Array = []
+	for p in s.props:
+		if s.tile_at(p[1] - 900, p[2]) == 2 and s.walkable(p[1] - 900, p[2]): # a prop on sand with sand to its left
+			prop = p
+			break
+	check(not prop.is_empty(), "the map has props on sand")
+	hider.x = prop[1] - 900
+	hider.y = prop[2]
+	var act := idle.duplicate(true)
+	act[1] = {"a": 0} # towards the prop (east)
+	s.step(act)
+	check(hider.disguise == int(prop[0]), "a hider becomes the prop it aims at (kind %d)" % hider.disguise)
+	for i in int(s.rules.still_ticks):
+		s.step(idle)
+	check(s.looks_like(hider) == int(prop[0]), "standing still it looks exactly like that prop")
+	# moving leaves tells: footprints on sand
+	var walk := idle.duplicate(true)
+	walk[1] = {"m": 2048} # west, on the sand
+	for i in 20:
+		s.step(walk)
+	check(s.looks_like(hider) == -1 and s.tells.any(func(t): return t.kind == 0), "a moving hider wobbles and leaves footprints on sand")
+	# seek phase: a tap on the hider finds it, a tap on a real prop makes the seeker dizzy
+	s.phase_left = 1
+	s.step(idle)
+	check(s.phase == HideSim.PHASE_SEEK, "after the hide time the seek phase starts")
+	seeker.x = hider.x - 1000
+	seeker.y = hider.y
+	seeker.cooldown = 0
+	var tap := idle.duplicate(true)
+	tap[0] = {"a": 0, "sd": 1000}
+	s.step(tap)
+	check(hider.role == HideSim.GULL and hider.found_by == 0 and seeker.points == int(s.rules.points.seeker_find), "a tap on the hider: found, it becomes a gull, the seeker scores")
+	var other: Array = s.props[0]
+	for p in s.props:
+		if s.walkable(p[1] - 1000, p[2]) and Fx.dist(p[1] - hider.x, p[2] - hider.y) > 3000 and not s.ents.any(func(e): return e.role == HideSim.HIDER and Fx.dist(e.x - p[1], e.y - p[2]) < 1500):
+			other = p
+			break
+	seeker.x = other[1] - 1000
+	seeker.y = other[2]
+	seeker.cooldown = 0
+	var before := seeker.points
+	s.step(tap)
+	check(seeker.dizzy > 0 and seeker.points == maxi(0, before + int(s.rules.points.seeker_miss)), "a tap on a real prop: dizzy and a point less")
+	# everyone found -> reveal straight away, seekers get the bonus
+	for e in s.ents:
+		if e.role == HideSim.HIDER:
+			e.role = HideSim.GULL
+			e.found_tick = s.tick
+	s.step(idle)
+	check(s.phase == HideSim.PHASE_REVEAL, "when every hider is found the round ends at once")
+	# the session ends after 3 rounds with places by points
+	var guard := 0
+	while not m.finished() and guard < 40000:
+		m.step({})
+		guard += 1
+	var res := s.result()
+	var places: Array = res.map(func(r): return int(r.place))
+	places.sort()
+	check(m.finished() and s.round_no == 2 and places == [1, 2, 3, 4, 5, 6], "3 rounds, then places 1-6 by points")
+	check(m.human_result().mode == "hide" and m.human_result().has("points"), "a result for the player")
+
+	# determinism and snapshot/restore
+	var a := HideMatch.create(77, "", 6, "normal")
+	var b := HideMatch.create(77, "", 6, "normal")
+	for i in 2500:
+		a.step()
+		b.step()
+	check(a.sim.state_hash() == b.sim.state_hash(), "Verstoppertje: same seed -> same state")
+	var snap := a.sim.snapshot()
+	for i in 1500:
+		a.step()
+	var c := HideMatch.create(77, "", 6, "normal")
+	c.sim.restore(snap)
+	for i in 1500:
+		c.step()
+	check(a.sim.state_hash() == c.sim.state_hash(), "Verstoppertje: snapshot + restore continues identically")
+
+	# rollback: 4 screens with lag end identical to a reference run with all input known
+	var n := 4
+	var animals := ["crab", "octopus", "gull", "crab"]
+	var clients: Array = []
+	for i in n:
+		clients.append(Rollback.new(HideMatch.create_online(5150, animals, 6, "normal"), i))
+	var net := RandomNumberGenerator.new()
+	net.seed = 3
+	var flight: Array = []
+	var ticks := 900
+	var stp := 0
+	while clients.any(func(cl): return cl.tick < ticks) and stp < ticks * 4:
+		stp += 1
+		for msg in flight.filter(func(x): return x[0] <= stp):
+			clients[msg[1]].remote_input(msg[2], msg[3], msg[4])
+		flight = flight.filter(func(x): return x[0] > stp)
+		for i in n:
+			var cl: Rollback = clients[i]
+			if cl.tick >= ticks or not cl.can_advance():
+				continue
+			cl.local_input([(stp * 97 + i * 1000) % 4096, 0 if stp % 40 == 0 else -1, -1, -1]) # walk around, act now and then
+			for out in cl.outbox:
+				for j in n:
+					if j != i:
+						flight.append([stp + net.randi_range(1, 7), j, i, out[0], out[1]])
+			cl.outbox.clear()
+			cl.advance()
+	for msg in flight:
+		clients[msg[1]].remote_input(msg[2], msg[3], msg[4])
+	var hashes: Array = clients.map(func(cl): return cl.settle())
+	var inputs: Dictionary = clients[0].confirmed_inputs(ticks)
+	var ref := HideMatch.create_online(5150, animals, 6, "normal")
+	for t in ticks:
+		var cmds := {}
+		for st in ref.humans:
+			cmds[st] = inputs[st][t]
+		ref.step_many(cmds)
+	var rbs: int = clients.reduce(func(acc, cl): return acc + cl.rollbacks, 0)
+	check(hashes.all(func(h): return h == ref.sim.state_hash()), "Verstoppertje rollback: 4 screens with lag end identical to the reference (%d rollbacks)" % rbs)
+	check(rbs > 0, "Verstoppertje rollback: predictions really were corrected")
+
+	var bal := HideBalanceRunner.run(6, "normal", 3)
+	print("hide: light balance, 6 sessions: %.2f of 4 found per round" % bal.avg_found)
+	check(bal.avg_found >= 1.0 and bal.avg_found <= 3.6, "bots find hiders in Verstoppertje (%.2f per round)" % bal.avg_found)

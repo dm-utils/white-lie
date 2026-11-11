@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "_note": "Things in the harbour a hider can become. radius in milli-tiles; on = tile kinds it stands on (see data/maps/haven.json _kinds).",
+  "kinds": {
+    "barrel":  { "radius": 380, "on": [3, 4], "name_key": "PROP_BARREL" },
+    "crate":   { "radius": 420, "on": [3, 4], "name_key": "PROP_CRATE" },
+    "buoy":    { "radius": 340, "on": [1, 2], "name_key": "PROP_BUOY" },
+    "net":     { "radius": 450, "on": [2, 4], "name_key": "PROP_NET" },
+    "anchor":  { "radius": 400, "on": [2, 4], "name_key": "PROP_ANCHOR" },
+    "pot":     { "radius": 380, "on": [2, 3], "name_key": "PROP_POT" },
+    "rope":    { "radius": 330, "on": [3], "name_key": "PROP_ROPE" },
+    "bollard": { "radius": 300, "on": [3, 4], "name_key": "PROP_BOLLARD" }
+  }
+}

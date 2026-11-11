@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "_note": "Verstoppertje rules (phase 2). Units: milli-tiles, ticks (30/s). Seats: seat s seeks in round r when (s + r) % 3 == 0.",
+  "tick_rate": 30,
+  "players": 6,
+  "map": "haven",
+  "rounds": 3,
+  "hide_ticks": 600,
+  "seek_ticks": 4500,
+  "reveal_ticks": 150,
+  "speed": { "hider": 115, "seeker": 125, "gull": 165 },
+  "water_speed_pct": 70,
+  "radius": 400,
+  "still_ticks": 30,
+  "disguise_range": 3000,
+  "tap_range": 1500,
+  "tap_pick": 700,
+  "dizzy_ticks": 60,
+  "dizzy_speed_pct": 45,
+  "tap_cooldown_ticks": 15,
+  "tells": {
+    "step_every_ticks": 8,
+    "footprint_ticks": 120,
+    "ripple_ticks": 60,
+    "noise_ticks": 30,
+    "noise_radius": 6000,
+    "max": 64
+  },
+  "points": {
+    "hider_per_ticks": 300,
+    "last_survivor": 5,
+    "never_found": 3,
+    "seeker_find": 6,
+    "seeker_miss": -1,
+    "all_found": 4
+  }
+}
