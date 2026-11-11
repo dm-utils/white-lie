@@ -143,3 +143,9 @@ CHAR_SKIPPER,Skipper,Schipper
 CHAR_FISHER,Fisher,Visser
 CHAR_KID,Kid,Kind
 RESULT_POINTS,{points} points,{points} punten
+ONLINE_START_NOW,Start now,Nu starten
+ONLINE_MAKE_ROOM,Room for friends,Kamer voor vrienden
+ONLINE_CODE_HINT,Code,Code
+ONLINE_JOIN_ROOM,Join,Meedoen
+ONLINE_ROOM_TITLE,Friends room {code},Vriendenkamer {code}
+ONLINE_ROOM_WAITING,{players} in the room · tell your friends the code,{players} in de kamer · geef je vrienden de code

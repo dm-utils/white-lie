@@ -30,6 +30,7 @@ func _ready() -> void:
 	test_perf_meter()
 	test_online_protocol()
 	test_characters_and_result()
+	test_room_codes()
 	test_hide_sim()
 	print("tests: %d passed, %d failed" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
@@ -551,3 +552,17 @@ func test_hide_sim() -> void:
 	var bal := HideBalanceRunner.run(6, "normal", 3)
 	print("hide: light balance, 6 sessions: %.2f of 4 found per round" % bal.avg_found)
 	check(bal.avg_found >= 1.0 and bal.avg_found <= 3.6, "bots find hiders in White Lie (%.2f per round)" % bal.avg_found)
+
+
+## Friends room codes: what the SDK makes and what a typed code becomes.
+func test_room_codes() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 9
+	var ok := true
+	for i in 50:
+		var c := St33fClient.pvp_room_code(rng)
+		ok = ok and c.length() == 4 and not (c.contains("O") or c.contains("0") or c.contains("I") or c.contains("1") or c.contains("L"))
+	check(ok, "room codes: 4 characters, no look-alikes")
+	var OS_ := preload("res://ui/online_screen.gd")
+	check(OS_.clean_code("k7pq") == "K7PQ" and OS_.clean_code(" k-7 p q x") == "K7PQ" and OS_.clean_code("o1il") == "", "typed codes: capitals, look-alikes dropped, at most 4")
+
