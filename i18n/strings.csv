@@ -149,3 +149,6 @@ ONLINE_CODE_HINT,Code,Code
 ONLINE_JOIN_ROOM,Join,Meedoen
 ONLINE_ROOM_TITLE,Friends room {code},Vriendenkamer {code}
 ONLINE_ROOM_WAITING,{players} in the room · tell your friends the code,{players} in de kamer · geef je vrienden de code
+HUD_YOU,YOU,JIJ
+ONLINE_PLAYER,Player,Speler
+HIDE_CONTROLS_TOUCH,Left thumb: walk · right button: disguise / tap,Linkerduim: lopen · rechterknop: vermommen / tikken

@@ -79,7 +79,8 @@ func _draw() -> void:
 	var c := attack_center()
 	draw_circle(c, ATTACK_RADIUS, Color("FF8A3D", 0.95 if attacking else 0.75))
 	draw_arc(c, ATTACK_RADIUS, 0, TAU, 64, ink, 6.0)
-	# a simple "burst" mark: three short strokes, readable without text
-	for i in 3:
-		var a := -PI / 2.0 + (i - 1) * 0.6
-		draw_line(c + Vector2(cos(a), sin(a)) * 30.0, c + Vector2(cos(a), sin(a)) * 70.0, ink, 9.0)
+	# a pointing hand reads as "this one!": disguise as it, or tap it (no text needed)
+	draw_circle(c + Vector2(-8, 18), 30.0, ink)
+	draw_circle(c + Vector2(-8, 18), 23.0, Color.WHITE)
+	draw_rect(Rect2(c + Vector2(-12, -48), Vector2(22, 60)), ink)
+	draw_rect(Rect2(c + Vector2(-6, -42), Vector2(10, 52)), Color.WHITE)

@@ -8,6 +8,7 @@ const DT := 1.0 / 30.0
 const MAX_STEPS := 3
 const RESULT_SCENE := "res://ui/result_screen.tscn"
 const PROP_PX := 104.0 # on-screen size of a 200 px prop SVG
+const PERSON_SCALE := 0.7 # 200 x 240 SVG -> 140 x 168 px on screen (as big as an animal in Whitecap)
 const INK := Color("2B3A4A")
 const WOOD := Color("B98A55")
 const STONE := Color("A9A9A2")
@@ -20,7 +21,7 @@ var actors: Node2D # props, disguised hiders and animals, sorted by y (z 1)
 var overlay: Node2D # gulls, rings, the player's marker (z 2)
 var cam: Camera2D
 var hud: Control
-var _people := {} # seat -> Node2D (the character, a placeholder figure)
+var _people := {} # seat -> Sprite2D (the character, assets/people/<id>.svg)
 var _masks := {} # seat -> Sprite2D (the prop a hider looks like)
 var _prev := {}
 var _acc := 0.0
@@ -31,6 +32,8 @@ var _msg_t := 0.0
 var _textures := {}
 var _labels := {}
 var _dark: ColorRect
+var controls := "keys" # keys | mouse | touch
+var touch: TouchControls
 var rb: Rollback # online: the rollback driving the session
 var net: OnlineClient # online: the room connection
 var _online_started := false
@@ -85,9 +88,10 @@ func _ready() -> void:
 		sp.position = Vector2(p[1], p[2]) * PX
 		actors.add_child(sp)
 	for e in s.ents:
-		var c := Node2D.new()
-		var col := Color(str(s.characters[e.id].get("color", "FFFFFF")))
-		c.draw.connect(_draw_person.bind(c, col))
+		var c := Sprite2D.new()
+		c.texture = load("res://assets/people/%s.svg" % str(s.characters[e.id].get("id", "skipper")))
+		c.offset = Vector2(0, -80) # the SVG's feet (100, 200) on the position
+		c.scale = Vector2.ONE * PERSON_SCALE
 		actors.add_child(c)
 		_people[e.id] = c
 		var mask := _prop_sprite(0)
@@ -186,10 +190,14 @@ func _command() -> Dictionary:
 	var cmd := {"m": -1, "a": -1, "s": -1}
 	var mx := int(_key(KEY_D) or _key(KEY_RIGHT)) - int(_key(KEY_A) or _key(KEY_LEFT))
 	var my := int(_key(KEY_S) or _key(KEY_DOWN)) - int(_key(KEY_W) or _key(KEY_UP))
-	if mx != 0 or my != 0:
+	if touch != null and touch.move != Vector2.ZERO:
+		cmd.m = Fx.atan2_a(int(touch.move.y * 1000), int(touch.move.x * 1000))
+	elif mx != 0 or my != 0:
 		cmd.m = Fx.atan2_a(my * 1000, mx * 1000)
 	var target := Vector2i(-1, -1)
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if touch != null and touch.attacking:
+		target = _nearest_thing(me) # the action button: disguise / tap the nearest thing
+	elif controls != "touch" and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		var w := get_global_mouse_position() / PX
 		target = Vector2i(int(w.x), int(w.y))
 	elif _key(KEY_SPACE):
@@ -266,15 +274,15 @@ func _update_actors() -> void:
 	var me: HideSim.Ent = s.ents[m.human]
 	var reveal := s.phase == HideSim.PHASE_REVEAL
 	for e in s.ents:
-		var c: Node2D = _people[e.id]
+		var c: Sprite2D = _people[e.id]
 		var mask: Sprite2D = _masks[e.id]
 		var pos := _pos(e)
 		var disguised: bool = e.role == HideSim.HIDER and e.disguise >= 0
 		c.visible = e.role != HideSim.GULL and (not disguised or reveal)
-		c.position = pos + Vector2(0, 18)
-		c.scale.x = -1.0 if Fx.cos_a(e.aim) < 0 else 1.0
-		c.rotation = sin(_t * 14.0) * 0.08 if e.still == 0 else 0.0
-		c.queue_redraw()
+		var walking: bool = e.still == 0
+		c.position = pos + Vector2(0, 18 - (absf(sin(_t * 14.0)) * 5.0 if walking else 0.0))
+		c.scale.x = PERSON_SCALE * (-1.0 if Fx.cos_a(e.aim) < 0 else 1.0)
+		c.rotation = sin(_t * 14.0) * 0.06 if walking else 0.0
 		mask.visible = disguised and not reveal
 		if mask.visible:
 			mask.texture = _texture(e.disguise)
@@ -282,16 +290,6 @@ func _update_actors() -> void:
 			# moving makes the prop wobble (the tell everyone can see); still = exactly like the real one
 			mask.rotation = sin(_t * 18.0) * 0.12 if e.still < int(s.rules.still_ticks) else 0.0
 			mask.modulate.a = 0.6 if e.id == me.id else 1.0
-
-
-## Placeholder person until the character art exists: body, head, a cap in the character's colour.
-func _draw_person(c: Node2D, col: Color) -> void:
-	c.draw_rect(Rect2(-17, -58, 34, 44), INK)
-	c.draw_rect(Rect2(-13, -54, 26, 38), col)
-	c.draw_circle(Vector2(0, -70), 17.0, INK)
-	c.draw_circle(Vector2(0, -70), 13.0, Color("F2C9A0"))
-	c.draw_rect(Rect2(-14, -88, 28, 9), col.darkened(0.25))
-	c.draw_circle(Vector2(5, -71), 2.5, INK)
 
 
 func _draw_board() -> void:
@@ -342,6 +340,14 @@ func _draw_overlay() -> void:
 			overlay.draw_circle(p, 12.0, Color.WHITE)
 			overlay.draw_line(p + Vector2(-26, -6), p + Vector2(-8, 0), INK, 5.0)
 			overlay.draw_line(p + Vector2(26, -6), p + Vector2(8, 0), INK, 5.0)
+	if s.phase == HideSim.PHASE_REVEAL: # the reveal: everyone's name over their head
+		var font := UiTheme.title_font()
+		for e in s.ents:
+			if e.role != HideSim.GULL:
+				var top := _pos(e) + Vector2(-80, -112)
+				var label: String = tr("HUD_YOU") if e.id == m.human else (m.names[e.id] if m.names[e.id] != "" else tr("ONLINE_PLAYER"))
+				overlay.draw_string_outline(font, top, label, HORIZONTAL_ALIGNMENT_CENTER, 160, 22, 7, INK)
+				overlay.draw_string(font, top, label, HORIZONTAL_ALIGNMENT_CENTER, 160, 22, Color.WHITE)
 	if me.role != HideSim.GULL:
 		var p := _pos(me)
 		overlay.draw_arc(p + Vector2(0, 18), 40.0, 0, TAU, 32, Color("3FE0FF"), 4.0)
@@ -385,8 +391,16 @@ func _build_hud() -> void:
 	msg.position.y = 160
 	msg.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_labels["msg"] = msg
+	controls = Controls.choose(Platform.load_profile(), Boot.args, DisplayServer.is_touchscreen_available())
+	if controls == "touch":
+		touch = TouchControls.new()
+		hud.add_child(touch)
+		touch.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		hud.move_child(touch, 1) # above the dark screen, below the labels
 	var hint := Label.new()
-	hint.text = tr("HIDE_CONTROLS_KEYS")
+	hint.text = tr("HIDE_CONTROLS_TOUCH") if controls == "touch" else tr("HIDE_CONTROLS_KEYS")
+	if controls == "touch":
+		get_tree().create_timer(4.0).timeout.connect(hint.hide)
 	hint.label_settings = UiTheme.heading(26, Color.WHITE, 6)
 	hud.add_child(hint)
 	hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
