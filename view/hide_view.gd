@@ -31,6 +31,10 @@ var _msg_t := 0.0
 var _textures := {}
 var _labels := {}
 var _dark: ColorRect
+var rb: Rollback # online: the rollback driving the session
+var net: OnlineClient # online: the room connection
+var _online_started := false
+var _next_hash := Rollback.HASH_EVERY - 1
 
 
 class _Ground:
@@ -52,6 +56,10 @@ func _ready() -> void:
 	if not HideMatch.CHARACTERS.has(who):
 		who = "skipper"
 	m = HideMatch.create(seed_value, who, 6, str(Boot.args.get("bots", "normal")))
+	var plan: Dictionary = Boot.next_match
+	Boot.next_match = {}
+	if plan.has("online"):
+		_start_online(plan.online)
 	var s := m.sim
 	var g := _Ground.new()
 	g.width = s.width
@@ -127,9 +135,13 @@ func _process(delta: float) -> void:
 		_acc += delta
 		var steps := 0
 		while _acc >= DT and steps < MAX_STEPS:
-			for e in m.sim.ents:
-				_prev[e.id] = Vector2(e.x, e.y)
-			m.step(_command())
+			if rb != null:
+				if not _online_step():
+					break # waiting for the start, or for someone's input
+			else:
+				for e in m.sim.ents:
+					_prev[e.id] = Vector2(e.x, e.y)
+				m.step(_command())
 			_handle_events()
 			_acc -= DT
 			steps += 1
@@ -140,6 +152,8 @@ func _process(delta: float) -> void:
 	else:
 		_ending -= delta
 		if _ending <= 0.0:
+			if net != null:
+				net.close()
 			Boot.last_result = m.human_result()
 			get_tree().change_scene_to_file(RESULT_SCENE)
 			return
@@ -397,3 +411,54 @@ func _update_hud() -> void:
 	if _dark.visible:
 		_labels.msg.text = tr("HIDE_WAIT_DARK").format({"seconds": secs})
 		_labels.msg.modulate.a = 1.0
+
+
+# --- online (phase 4): relay + rollback, as in Whitecap ---
+
+## The lobby's "match" message: same seed and seats on every screen; bots fill the empty seats.
+func _start_online(info: Dictionary) -> void:
+	m = HideMatch.create_online(int(info.seed), info.get("animals", []), 6, "normal")
+	m.human = int(info.slot)
+	rb = Rollback.new(m, m.human, int(info.get("delay", 2)))
+	net = OnlineClient.new()
+	add_child(net)
+	net.message.connect(_on_net)
+	net.closed.connect(func(_code: int) -> void:
+		if _ending < 0.0:
+			_say(tr("ONLINE_LOST"), 3.0)
+			_ending = 3.0)
+	net.open(St33f.client.pvp_room_url(str(info.room), int(info.slot), str(info.key)))
+	_say(tr("ONLINE_WAITING_START"), 30.0)
+
+
+func _on_net(msg: Dictionary) -> void:
+	match OnlineClient.apply(rb, msg):
+		"start":
+			_online_started = true
+			_announce_round()
+		"desync":
+			_say(tr("ONLINE_DESYNC"), 3.0)
+			if _ending < 0.0:
+				_ending = 3.0
+			if St33f.crash != null:
+				St33f.crash.capture("desync", "online desync at tick %d" % int(msg.get("t", -1)), [])
+
+
+## One online tick: own input out, the rollback plays (replaying corrected ticks), settled hashes out.
+func _online_step() -> bool:
+	if not _online_started or not rb.can_advance():
+		return false
+	for e in m.sim.ents:
+		_prev[e.id] = Vector2(e.x, e.y)
+	rb.local_input(HideMatch.cmd_to(_command()))
+	for out in OnlineClient.batch(rb.outbox):
+		net.send(out)
+	rb.outbox.clear()
+	rb.advance()
+	while rb.settled_hash(_next_hash) != -1:
+		net.send({"type": "hash", "t": _next_hash, "h": rb.settled_hash(_next_hash)})
+		if OS.is_debug_build():
+			print("online settled tick %d hash %d seat %d of %d rollbacks %d" % [_next_hash, rb.settled_hash(_next_hash), m.human, m.sim.ents.size(), rb.rollbacks])
+		_next_hash += Rollback.HASH_EVERY
+	return true
+

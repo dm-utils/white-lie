@@ -13,6 +13,7 @@ import functools
 import hashlib
 import http.server
 import os
+import re
 import socketserver
 import sys
 import threading
@@ -34,6 +35,50 @@ def serve(directory: str) -> tuple[socketserver.TCPServer, int]:
 
 def canvas_hash(page) -> str:
     return hashlib.sha256(page.screenshot()).hexdigest()
+
+
+def online_check(browser, port: int, shots) -> list:
+    """Two windows click Online in the menu, land in one session through the dev relay, and must agree on every
+    settled tick (desync check). Waits for 3 common checks, at most 75 s (slow runner)."""
+    failures = []
+    logs = {0: [], 1: []}
+    pages = []
+    for i in range(2):
+        pg = browser.new_context(viewport={"width": 960, "height": 540}).new_page()
+        pg.on("console", lambda m, i=i: logs[i].append(m.text))
+        pg.goto(f"http://127.0.0.1:{port}/index.html?scene=menu&lang=nl")
+        pg.wait_for_selector("#loader.done", state="attached", timeout=60000)
+        pages.append(pg)
+    pages[0].wait_for_timeout(1500)
+    for pg in pages:
+        pg.mouse.click(480, 331)  # "Online spelen", under Play
+    pages[0].wait_for_timeout(12000)
+    pages[0].keyboard.down("KeyD")
+    rx = re.compile(r"online settled tick (\d+) hash (-?\d+) seat (\d+)")
+
+    def settled():
+        return [{int(m.group(1)): (int(m.group(2)), int(m.group(3))) for line in logs[i] for m in [rx.search(line)] if m} for i in range(2)]
+
+    for _ in range(25):
+        pages[0].wait_for_timeout(3000)
+        got = settled()
+        if len(set(got[0]) & set(got[1])) >= 3:
+            break
+    if shots:
+        pages[1].screenshot(path=f"{shots}/web-online-session.png")
+    got = settled()
+    common = sorted(set(got[0]) & set(got[1]))
+    seats = {v[1] for g in got for v in g.values()}
+    print(f"online: settled ticks {len(got[0])} / {len(got[1])}, common {len(common)}, seats {sorted(seats)}")
+    if len(seats) < 2:
+        failures.append("online: the two windows did not end up in the same session")
+    elif not common:
+        failures.append("online: no settled ticks in common")
+    elif any(got[0][t][0] != got[1][t][0] for t in common):
+        failures.append("online: the two windows disagree (desync)")
+    for pg in pages:
+        pg.context.close()
+    return failures
 
 
 def main() -> int:
@@ -117,6 +162,7 @@ def main() -> int:
             load(f"{base}?scene={scene}{extra}", name)
             page.wait_for_timeout(2500)
             shot(page, name)
+        failures.extend(online_check(browser, port, shots))
         browser.close()
     httpd.shutdown()
 
