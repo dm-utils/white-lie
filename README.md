@@ -1,42 +1,14 @@
-# Getij
+# White Lie
 
-Beach animals brawl on a shrinking island while the tide comes in. Godot 4.7.2 (pinned), GDScript.
+Hide and seek in the harbour: hiders become a prop (a barrel, a crate, a buoy), seekers have two and a half minutes
+to find them. Stand still and you look like the real thing; move and you give yourself away.
 
-## Run
+Godot 4.7.2 (GDScript), deterministic integer simulation, online play through a relay with rollback.
 
-```
-godot --path .                                   # normal start
-godot --path . -- --scene=match --seed=123       # debug entry: straight into a scene with a seed
-```
+- Run the tests: `godot --headless --path . res://tests/run_tests.tscn -- --no-crash-reports --no-network`
+- Bot balance: `godot --headless --path . res://tests/hide_balance.tscn -- --sessions=60`
+- Debug entry: `godot --path . -- --scene=hide --seed=123` (web: `index.html?scene=hide&seed=123`)
+- Generated content (never edit the output by hand): `tools/gen_haven.py` (map), `tools/art/props.py` (props),
+  `tools/art/tiles.py` (ground atlas), `tools/audio/sfx.py` (sounds)
 
-Web: `index.html?scene=match&seed=123`.
-
-## Test
-
-```
-godot --headless --path . --import
-godot --headless --path . res://tests/run_tests.tscn
-python -I tools/web_smoke.py build/web           # after exporting the "Web" preset
-```
-
-## Layout
-
-| Folder | Contents |
-|---|---|
-| `sim/` | Pure, deterministic game rules (no nodes, no wall clock, seeded RNG) |
-| `bots/` | Bot AI, runs inside the sim tick |
-| `view/` | Scenes, animation, effects, camera |
-| `ui/` | Screens, HUD, theme |
-| `platform/` | `Platform` autoload: the only door to the backend |
-| `boot/` | Debug entry point |
-| `data/` | Content as JSON |
-| `i18n/` | `strings.csv`: every player-facing text, via `tr("KEY")` |
-| `assets/` | Art, audio, fonts; every file has a row in `assets/credits.csv` |
-| `tests/` | Headless test runner |
-| `tools/` | Build and check scripts |
-
-## Rules
-
-- No player-facing string inline: `tr("KEY")`, and the key goes into `i18n/strings.csv` in the same change.
-- No asset without a row in `assets/credits.csv` (source, author, licence, date).
-- `develop` gets the work; `main` changes only through a pull request the owner merges. Never force-push.
+© ST33F. All rights reserved: the source is visible, it is not open source.

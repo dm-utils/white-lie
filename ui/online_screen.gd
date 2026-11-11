@@ -1,14 +1,12 @@
 extends Control
 ## Looking for an online match (phase 12c): joins the lobby with the chosen animal, shows how many players were
 ## found and when it starts (bots fill empty seats), then hands the seat over to the match scene.
-## Strandbal (phase 14c) has its own queue: the switch button changes the mode and queues again.
-## Debug entry: --scene=online [--mode=ball]
+## Debug entry: --scene=online
 
 var _client: OnlineClient
 var _status: Label
 var _done := false
 var _mode := ""
-var _switch: Button
 var _title: Label
 
 
@@ -27,7 +25,6 @@ func _ready() -> void:
 	box.add_theme_constant_override("separation", 30)
 	add_child(box)
 	box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_mode = "ball" if str(Boot.args.get("mode", "")) == "ball" else ""
 	_title = Label.new()
 	_title.label_settings = UiTheme.heading(90)
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -41,12 +38,6 @@ func _ready() -> void:
 	cancel.text = tr("ONLINE_CANCEL")
 	cancel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	cancel.pressed.connect(_back)
-	_switch = Button.new()
-	_switch.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	_switch.pressed.connect(func() -> void:
-		_mode = "" if _mode == "ball" else "ball"
-		_queue())
-	box.add_child(_switch)
 	box.add_child(cancel)
 	_show_mode()
 
@@ -66,12 +57,12 @@ func _queue() -> void:
 		_client.close()
 		_client.queue_free()
 	_status.text = tr("ONLINE_CONNECTING")
-	var animal := str(Platform.load_profile().get("selected_animal", "octopus"))
+	var who := str(Platform.load_profile().get("selected_character", "skipper"))
 	_client = OnlineClient.new()
 	add_child(_client)
 	_client.message.connect(_on_message)
 	_client.closed.connect(_on_closed)
-	_client.open(St33f.client.pvp_lobby_url(animal, _mode))
+	_client.open(St33f.client.pvp_lobby_url(who, _mode))
 
 
 func _on_closed(_c: int) -> void:
@@ -80,8 +71,7 @@ func _on_closed(_c: int) -> void:
 
 
 func _show_mode() -> void:
-	_title.text = tr("ONLINE_TITLE") if _mode == "" else tr("ONLINE_TITLE_BALL")
-	_switch.text = tr("ONLINE_SWITCH_BALL") if _mode == "" else tr("ONLINE_SWITCH_NORMAL")
+	_title.text = tr("ONLINE_TITLE")
 
 
 func _on_message(msg: Dictionary) -> void:
@@ -91,7 +81,7 @@ func _on_message(msg: Dictionary) -> void:
 		"match":
 			_done = true
 			Boot.next_match = {"online": msg, "mode": str(msg.get("mode", _mode))}
-			get_tree().change_scene_to_file(Boot.SCENES["match"])
+			get_tree().change_scene_to_file(Boot.SCENES["hide"])
 
 
 func _back() -> void:

@@ -22,7 +22,7 @@ def commit() -> str:
 
 def main() -> int:
     folder = sys.argv[1]
-    title = sys.argv[2] if len(sys.argv) > 2 else "Getij screenshots"
+    title = sys.argv[2] if len(sys.argv) > 2 else "White Lie screenshots"
     shots = sorted(f for f in os.listdir(folder) if f.lower().endswith(".png"))
     when = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     cards = "\n".join(

@@ -1,16 +1,11 @@
 extends Node
 ## Debug entry point: start straight into a scene with a seed. Makes every test and agent faster.
-##   Desktop: godot --path . -- --scene=match --seed=123
-##   Web:     index.html?scene=match&seed=123
+##   Desktop: godot --path . -- --scene=hide --seed=123
+##   Web:     index.html?scene=hide&seed=123
 
 const SCENES := {
 	"menu": "res://ui/main_menu.tscn",
-	"match": "res://view/match.tscn",
 	"settings": "res://ui/settings_screen.tscn",
-	"zoo": "res://view/zoo.tscn",
-	"fx": "res://view/fx_review.tscn",
-	"leaderboard": "res://ui/leaderboard_screen.tscn",
-	"collection": "res://ui/collection_screen.tscn",
 	"online": "res://ui/online_screen.tscn",
 	"hide": "res://view/hide_view.tscn",
 }

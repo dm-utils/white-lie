@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "_note": "White Lie characters (people). Placeholders: drawn as simple figures until the character art exists (phase 3).",
+  "characters": [
+    {
+      "id": "skipper",
+      "name_key": "CHAR_SKIPPER",
+      "color": "3F8CFF"
+    },
+    {
+      "id": "fisher",
+      "name_key": "CHAR_FISHER",
+      "color": "FF8A3D"
+    },
+    {
+      "id": "kid",
+      "name_key": "CHAR_KID",
+      "color": "5BD66B"
+    }
+  ]
+}

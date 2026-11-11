@@ -1,6 +1,6 @@
 class_name ProfileMerge
 extends RefCounted
-## Deterministic merge of two Getij profiles (local and server) after a 409:
+## Deterministic merge of two profiles (local and server) after a 409:
 ##   counters        -> max          (pearls, stats, mastery, write counter)
 ##   unlocks         -> union        (animals, owned looks, badges, avatars), sorted
 ##   seasons         -> max per season (pearls)

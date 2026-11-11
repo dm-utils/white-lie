@@ -1,6 +1,6 @@
 class_name HideSim
 extends RefCounted
-## The rules of White Lie (phase 2): pure, deterministic, integer-only, like MatchSim in Getij.
+## The rules of White Lie (phase 2): pure, deterministic, integer-only, as the shared deterministic-sim pattern.
 ## Input: one command per seat per tick ({m: move angle, a: action angle, s: gadget angle, sd: distance}; -1 = none).
 ## Action = disguise as the nearest prop in that direction (hider) or tap the nearest thing there (seeker).
 ## A session is 3 rounds; every round: hide (seekers frozen in the office) -> seek -> reveal. Roles follow from the
@@ -26,7 +26,7 @@ static var _kind_cfg: Dictionary = {}
 
 class Ent:
 	var id := 0
-	var animal_idx := 0
+	var animal_idx := 0 # index in data/characters.json
 	var x := 0
 	var y := 0
 	var role := HIDER
@@ -69,7 +69,7 @@ var phase := PHASE_HIDE
 var phase_left := 0
 var finished := 0
 var events: Array = []
-var animals: Array = [] # animal config per seat
+var characters: Array = [] # character config per seat
 var _map: Dictionary
 
 
@@ -110,16 +110,13 @@ func _init(p_seed: int, entrants: Array) -> void:
 		tiles.append(int(v))
 	for p in _map.props:
 		props.append([_kinds.find(str(p.kind)), int(p.x), int(p.y)])
-	var all_animals := Content.animals()
+	var all := Content.characters()
 	for i in entrants.size():
-		var cfg: Dictionary = {}
-		for a in all_animals:
-			if a.id == entrants[i]:
-				cfg = a
-		animals.append(cfg)
+		var cfg := Content.character(str(entrants[i]))
+		characters.append(cfg)
 		var e := Ent.new()
 		e.id = i
-		e.animal_idx = all_animals.find(cfg)
+		e.animal_idx = all.find(cfg)
 		ents.append(e)
 	_start_round()
 
@@ -398,7 +395,7 @@ func result() -> Array:
 	order.sort_custom(func(a, b): return a.points > b.points or (a.points == b.points and a.id < b.id))
 	var out: Array = []
 	for e in ents:
-		out.append({"id": e.id, "animal": str(animals[e.id].get("id", "")), "points": e.points, "place": order.find(e) + 1})
+		out.append({"id": e.id, "character": str(characters[e.id].get("id", "")), "points": e.points, "place": order.find(e) + 1})
 	return out
 
 
@@ -411,13 +408,22 @@ static func _d2(dx: int, dy: int) -> int:
 func state_hash() -> int:
 	var h := 2166136261
 	for v in [tick, rng.state, round_no, phase, phase_left, seek_from, finished, ents.size(), tells.size()]:
-		h = MatchSim._mix(h, v)
+		h = _mix(h, v)
 	for e in ents:
 		for f in ENT_FIELDS:
-			h = MatchSim._mix(h, int(e.get(f)))
+			h = _mix(h, int(e.get(f)))
 	for t in tells:
 		for f in TELL_FIELDS:
-			h = MatchSim._mix(h, int(t.get(f)))
+			h = _mix(h, int(t.get(f)))
+	return h
+
+
+## FNV-1a step over 4 bytes of v.
+static func _mix(h: int, v: int) -> int:
+	var u := v & 0xFFFFFFFF
+	for i in 4:
+		h ^= (u >> (i * 8)) & 0xFF
+		h = (h * 16777619) & 0xFFFFFFFF
 	return h
 
 

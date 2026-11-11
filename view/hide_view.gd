@@ -1,13 +1,12 @@
 extends Node2D
 ## A Verstoppertje session on screen (phase 3). Reads the sim, never changes it: input becomes a command per tick,
 ## the sim steps at 30 Hz, the view interpolates. Seekers see a disguised hider exactly as the real prop.
-## Debug entry: --scene=hide --seed=N [--animal=crab] [--bots=easy|normal|hard]
+## Debug entry: --scene=hide --seed=N [--character=skipper] [--bots=easy|normal|hard]
 
-const PX := 0.08 # screen pixels per milli-tile, as in Getij
+const PX := 0.08 # screen pixels per milli-tile: 80 px per tile
 const DT := 1.0 / 30.0
 const MAX_STEPS := 3
 const RESULT_SCENE := "res://ui/result_screen.tscn"
-const ANIMAL_PX := 96.0
 const PROP_PX := 104.0 # on-screen size of a 200 px prop SVG
 const INK := Color("2B3A4A")
 const WOOD := Color("B98A55")
@@ -21,7 +20,7 @@ var actors: Node2D # props, disguised hiders and animals, sorted by y (z 1)
 var overlay: Node2D # gulls, rings, the player's marker (z 2)
 var cam: Camera2D
 var hud: Control
-var _cutouts := {} # seat -> Cutout (the animal)
+var _people := {} # seat -> Node2D (the character, a placeholder figure)
 var _masks := {} # seat -> Sprite2D (the prop a hider looks like)
 var _prev := {}
 var _acc := 0.0
@@ -49,10 +48,10 @@ func _ready() -> void:
 	Platform.entered("hide")
 	var profile: Dictionary = Platform.load_profile()
 	var seed_value := Boot.seed_value() if Boot.seed_value() != 0 else randi() % 2000000000 + 1
-	var animal := str(Boot.args.get("animal", profile.get("selected_animal", "octopus")))
-	if not HideMatch.ANIMALS.has(animal):
-		animal = "octopus"
-	m = HideMatch.create(seed_value, animal, 6, str(Boot.args.get("bots", "normal")))
+	var who := str(Boot.args.get("character", profile.get("selected_character", "skipper")))
+	if not HideMatch.CHARACTERS.has(who):
+		who = "skipper"
+	m = HideMatch.create(seed_value, who, 6, str(Boot.args.get("bots", "normal")))
 	var s := m.sim
 	var g := _Ground.new()
 	g.width = s.width
@@ -78,12 +77,11 @@ func _ready() -> void:
 		sp.position = Vector2(p[1], p[2]) * PX
 		actors.add_child(sp)
 	for e in s.ents:
-		var c := Cutout.new()
-		c.size_px = ANIMAL_PX
+		var c := Node2D.new()
+		var col := Color(str(s.characters[e.id].get("color", "FFFFFF")))
+		c.draw.connect(_draw_person.bind(c, col))
 		actors.add_child(c)
-		var id := str(s.animals[e.id].get("id", "octopus"))
-		c.build(id, Rewards.equipped_look(profile, id) if e.id == m.human else "")
-		_cutouts[e.id] = c
+		_people[e.id] = c
 		var mask := _prop_sprite(0)
 		mask.visible = false
 		actors.add_child(mask)
@@ -167,7 +165,7 @@ func _key(k: Key) -> bool:
 
 
 ## Keys: WASD walk, Space acts on the nearest thing (hider: the nearest prop; seeker: the nearest prop or animal).
-## Mouse: click a prop. Touch comes with the Getij touch controls in a later step.
+## Mouse: click a prop. Touch: the shared touch controls, in a later step.
 func _command() -> Dictionary:
 	var s := m.sim
 	var me: HideSim.Ent = s.ents[m.human]
@@ -254,14 +252,15 @@ func _update_actors() -> void:
 	var me: HideSim.Ent = s.ents[m.human]
 	var reveal := s.phase == HideSim.PHASE_REVEAL
 	for e in s.ents:
-		var c: Cutout = _cutouts[e.id]
+		var c: Node2D = _people[e.id]
 		var mask: Sprite2D = _masks[e.id]
 		var pos := _pos(e)
 		var disguised: bool = e.role == HideSim.HIDER and e.disguise >= 0
 		c.visible = e.role != HideSim.GULL and (not disguised or reveal)
 		c.position = pos + Vector2(0, 18)
-		c.moving = e.still == 0
-		c.facing = -1.0 if Fx.cos_a(e.aim) < 0 else 1.0
+		c.scale.x = -1.0 if Fx.cos_a(e.aim) < 0 else 1.0
+		c.rotation = sin(_t * 14.0) * 0.08 if e.still == 0 else 0.0
+		c.queue_redraw()
 		mask.visible = disguised and not reveal
 		if mask.visible:
 			mask.texture = _texture(e.disguise)
@@ -269,6 +268,16 @@ func _update_actors() -> void:
 			# moving makes the prop wobble (the tell everyone can see); still = exactly like the real one
 			mask.rotation = sin(_t * 18.0) * 0.12 if e.still < int(s.rules.still_ticks) else 0.0
 			mask.modulate.a = 0.6 if e.id == me.id else 1.0
+
+
+## Placeholder person until the character art exists: body, head, a cap in the character's colour.
+func _draw_person(c: Node2D, col: Color) -> void:
+	c.draw_rect(Rect2(-17, -58, 34, 44), INK)
+	c.draw_rect(Rect2(-13, -54, 26, 38), col)
+	c.draw_circle(Vector2(0, -70), 17.0, INK)
+	c.draw_circle(Vector2(0, -70), 13.0, Color("F2C9A0"))
+	c.draw_rect(Rect2(-14, -88, 28, 9), col.darkened(0.25))
+	c.draw_circle(Vector2(5, -71), 2.5, INK)
 
 
 func _draw_board() -> void:
@@ -303,7 +312,7 @@ func _draw_board() -> void:
 				board.draw_arc(p, 16.0 + (1.0 - life) * 40.0, 0, TAU, 24, Color(1.0, 0.85, 0.3, 0.8 * life), 4.0)
 	# shadows under the animals
 	for e in s.ents:
-		if _cutouts[e.id].visible:
+		if _people[e.id].visible:
 			board.draw_set_transform(_pos(e) + Vector2(0, 20), 0.0, Vector2(1.0, 0.38))
 			board.draw_circle(Vector2.ZERO, 26.0, Color(0, 0, 0, 0.18))
 			board.draw_set_transform(Vector2.ZERO)

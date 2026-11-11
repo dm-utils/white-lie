@@ -68,13 +68,6 @@ jobs:
       - name: Tests
         run: timeout 300 godot --headless --path . res://tests/run_tests.tscn -- --no-crash-reports --no-network
 
-      - name: Replay check runs headless on Linux (sample written by the tests)
-        run: |
-          out=$(timeout 300 godot --headless --path . res://tools/verify/verify_scores.tscn -- \
-            --in="$HOME/.local/share/godot/app_userdata/Getij/verify_sample.json" --out="$RUNNER_TEMP/verdicts.json")
-          echo "$out"
-          echo "$out" | grep -q "4 scores, 1 verified, 3 rejected"
-
       - name: Push setting declarations to the dev platform (develop only, needs the deploy key)
         if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
         env:
@@ -82,25 +75,16 @@ jobs:
         run: |
           if [ -z "$DEPLOY_KEY" ]; then echo "::notice::ST33F_DEPLOY_KEY_DEV not set yet (OWNER_TASKS 5); skipping"; exit 0; fi
           curl -sf -X PUT -H "Content-Type: application/json" -H "X-Deploy-Key: $DEPLOY_KEY" \
-            --data @data/settings_defs.json https://st33f-accounts-dev.st33fd3v.workers.dev/v1/games/getij/settings/defs
-
-      - name: Push the score rules to the dev leaderboards (develop only, needs the deploy key)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-        env:
-          DEPLOY_KEY: ${{ secrets.ST33F_DEPLOY_KEY_DEV }}
-        run: |
-          if [ -z "$DEPLOY_KEY" ]; then echo "::notice::ST33F_DEPLOY_KEY_DEV not set yet; skipping"; exit 0; fi
-          python3 -c "import json; r = json.load(open('data/rules.json')); print(json.dumps({'score': r['score'], 'limits': r['limits']}))" > "$RUNNER_TEMP/rules.json"
-          curl -sf -X PUT -H "Content-Type: application/json" -H "X-Deploy-Key: $DEPLOY_KEY" \
-            --data @"$RUNNER_TEMP/rules.json" https://st33f-leaderboards-dev.st33fd3v.workers.dev/v1/games/getij/rules
+            --data @data/settings_defs.json https://st33f-accounts-dev.st33fd3v.workers.dev/v1/games/white-lie/settings/defs
 
       - name: Tool tests (translation sync)
         run: python3 -I tools/test_i18n_sync.py
 
       - name: Generated art is up to date (art comes from scripts; never edit the output by hand)
         run: |
-          python3 -I tools/art/animals.py
-          git diff --exit-code -- assets/animals assets/looks data/rigs
+          python3 -I tools/art/props.py
+          python3 -I tools/gen_haven.py > /dev/null
+          git diff --exit-code -- assets/props data/maps
           python3 -I tools/art/tiles.py --check
 
       - name: Translations — push the source (develop), pull reviewed Final texts into this build
@@ -118,9 +102,9 @@ jobs:
         run: |
           mkdir -p build/web build/windows build/android && touch build/.gdignore
           timeout 600 godot --headless --path . --export-release "Web" build/web/index.html
-          # debug web build only for the smoke test (debug flags: fast tide, god mode, fps log)
+          # debug web build only for the smoke test (debug flags, fps log)
           mkdir -p build/web-debug && timeout 600 godot --headless --path . --export-debug "Web" build/web-debug/index.html
-          timeout 600 godot --headless --path . --export-release "Windows" build/windows/Getij.exe
+          timeout 600 godot --headless --path . --export-release "Windows" build/windows/WhiteLie.exe
 
       - name: Pre-compress web build (brotli)
         run: |
@@ -145,7 +129,7 @@ jobs:
 
       - name: Contact sheet of the screenshots
         if: always()
-        run: mkdir -p build/shots && python3 -I tools/contact_sheet.py build/shots "Getij — ${GITHUB_REF_NAME}"
+        run: mkdir -p build/shots && python3 -I tools/contact_sheet.py build/shots "White Lie — ${GITHUB_REF_NAME}"
 
       - name: Android debug build
         run: |
@@ -161,7 +145,7 @@ jobs:
           export GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$RUNNER_TEMP/debug.keystore"
           export GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey
           export GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android
-          timeout 600 godot --headless --path . --export-debug "Android" build/android/getij-debug.apk
+          timeout 600 godot --headless --path . --export-debug "Android" build/android/whitelie-debug.apk
           ls -la build/android
 
       - name: Scan build snapshot for secrets

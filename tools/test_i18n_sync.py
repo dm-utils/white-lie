@@ -32,7 +32,7 @@ try:
 
     def fake_call(method, url, headers, body=None):
         sent.append((method, url, headers, body))
-        if url.endswith("/api/sync/final?ns=getij"):
+        if url.endswith("/api/sync/final?ns=white-lie"):
             return {"final": {"nl": {"MENU_PLAY": "SPEEL!", "HUD_LEFT": "nog {aantal}", "NOT_A_KEY": "x"}, "de": {"MENU_PLAY": "SPIELEN"}}}
         return {"strings": 1, "english_changed": 0, "removed": 0}
 
@@ -50,7 +50,7 @@ try:
     sent.clear()
     sync.push()
     body = sent[0][3]
-    check(body["ns"] == "getij" and body["langs"] == ["nl"] and any(s["key"] == "MENU_PLAY" and s["code"]["nl"] for s in body["strings"]),
+    check(body["ns"] == "white-lie" and body["langs"] == ["nl"] and any(s["key"] == "MENU_PLAY" and s["code"]["nl"] for s in body["strings"]),
           "push sends English, context and the code's Dutch")
 finally:
     shutil.rmtree(tmp, ignore_errors=True)

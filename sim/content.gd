@@ -1,7 +1,6 @@
 class_name Content
 extends RefCounted
-## Content is data: animals, islands, the path, achievements live in res://data/*.json.
-## Pure loader, no nodes.
+## Content is data: characters, maps, props, rules live in res://data/*.json. Pure loader, no nodes.
 
 
 static func load_json(path: String) -> Variant:
@@ -11,15 +10,15 @@ static func load_json(path: String) -> Variant:
 	return JSON.parse_string(FileAccess.get_file_as_string(path))
 
 
-static func animals() -> Array:
-	var d: Variant = load_json("res://data/animals.json")
+static func characters() -> Array:
+	var d: Variant = load_json("res://data/characters.json")
 	if typeof(d) != TYPE_DICTIONARY:
 		return []
-	return d.get("animals", [])
+	return d.get("characters", [])
 
 
-static func animal(id: String) -> Dictionary:
-	for a in animals():
-		if a.get("id", "") == id:
-			return a
+static func character(id: String) -> Dictionary:
+	for c in characters():
+		if c.get("id", "") == id:
+			return c
 	return {}

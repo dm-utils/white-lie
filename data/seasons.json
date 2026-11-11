@@ -1,44 +1,5 @@
 {
   "version": 1,
-  "_note": "Seasons: a second free path each (FO 7). Dates in UTC, inclusive. Rewards only looks, badges, avatars: never power.",
-  "seasons": [
-    {
-      "id": "storm-2026",
-      "name_key": "SEASON_STORM",
-      "start": "2026-11-10",
-      "end": "2027-01-31",
-      "rewards": [
-        {
-          "at": 80,
-          "kind": "avatar",
-          "id": "storm_cloud",
-          "name_key": "REWARD_STORM_AVATAR"
-        },
-        {
-          "at": 200,
-          "kind": "look",
-          "id": "gull_storm",
-          "name_key": "LOOK_GULL_STORM"
-        },
-        {
-          "at": 350,
-          "kind": "look",
-          "id": "crab_storm",
-          "name_key": "LOOK_CRAB_STORM"
-        },
-        {
-          "at": 500,
-          "kind": "look",
-          "id": "octopus_storm",
-          "name_key": "LOOK_OCTOPUS_STORM"
-        },
-        {
-          "at": 700,
-          "kind": "badge",
-          "id": "storm_rider",
-          "name_key": "REWARD_STORM_RIDER"
-        }
-      ]
-    }
-  ]
+  "_note": "Seasons: a second free path each; dates UTC, inclusive (phase 5).",
+  "seasons": []
 }

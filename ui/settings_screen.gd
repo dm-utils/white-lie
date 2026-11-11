@@ -9,7 +9,6 @@ var _code_edit: LineEdit
 var _resend: Button
 var _resend_left := 0.0
 var _busy := false
-const MatchViewScript := preload("res://view/match_view.gd")
 var _delete: Button
 var _delete_armed := 0.0
 var _privacy_status: Label
@@ -67,7 +66,7 @@ func _ready() -> void:
 	controls.add_item(tr("CONTROLS_MOUSE"))
 	controls.add_item(tr("CONTROLS_TOUCH"))
 	var profile: Dictionary = Platform.load_profile()
-	controls.selected = maxi(0, ["keys", "mouse", "touch"].find(MatchViewScript.choose_controls(profile, {}, DisplayServer.is_touchscreen_available())))
+	controls.selected = maxi(0, ["keys", "mouse", "touch"].find(Controls.choose(profile, {}, DisplayServer.is_touchscreen_available())))
 	controls.item_selected.connect(_on_controls)
 	row.add_child(controls)
 
@@ -105,8 +104,7 @@ func _ready() -> void:
 		var p: Dictionary = Platform.load_profile()
 		p["name"] = PlayerName.random()
 		Platform.save_profile(p)
-		name_label.text = PlayerName.text(p.name)
-		PublicProfile.publish())
+		name_label.text = PlayerName.text(p.name))
 	name_row.add_child(reroll)
 
 	# sound effects volume (a test sound plays when you let go)

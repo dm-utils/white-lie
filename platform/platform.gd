@@ -22,9 +22,6 @@ func _ready() -> void:
 		St33f.start_crash_reporting("boot")
 	if not args.has("--no-network"):
 		St33f.fetch_settings()
-		St33f.signed_in.connect(func(_u: String) -> void: PublicProfile.publish(true))
-		if St33f.is_signed_in():
-			PublicProfile.publish()
 
 
 const LANGUAGES := ["en", "nl"]

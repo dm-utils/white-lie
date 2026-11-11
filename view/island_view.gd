@@ -12,7 +12,7 @@ const ATLAS := preload("res://assets/island/atlas.png")
 
 var tile_px := 80.0
 var shown_level := 0.0
-var _sim # MatchSim, or anything with width, height, heights, level, phase_left, finished and rules.tide
+var _sim # anything with width, height, heights, level, phase_left, finished and rules.tide
 var _mat: ShaderMaterial
 
 

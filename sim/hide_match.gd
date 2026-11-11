@@ -1,9 +1,9 @@
 class_name HideMatch
 extends RefCounted
-## One session = HideSim + bots + names, with the same interface as Getij's Match so Rollback, OnlineClient and
+## One session = HideSim + bots + names, with the interface Rollback expects, so Rollback, OnlineClient and
 ## the replay work unchanged: step(human_command), step_many({seat: cmd}), to_bot(seat), humans, cmd_from/cmd_to.
 
-const ANIMALS := ["crab", "octopus", "gull"]
+const CHARACTERS := ["skipper", "fisher", "kid"]
 const EMPTY := [-1, -1, -1, -1]
 
 var sim: HideSim
@@ -16,32 +16,32 @@ var humans: Array = []
 var _bot_cfg: Dictionary
 
 
-static func create(seed_value: int, human_animal: String, players := 6, level := "normal") -> HideMatch:
+static func create(seed_value: int, human_character: String, players := 6, level := "normal") -> HideMatch:
 	var m := HideMatch.new()
 	m.bot_level = level
 	m._bot_cfg = HideBrain.level_config(level)
 	var pick := SimRng.new(seed_value ^ 0x5BD1E995)
 	var entrants: Array = []
-	if human_animal != "":
-		entrants.append(human_animal)
+	if human_character != "":
+		entrants.append(human_character)
 		m.human = 0
 	while entrants.size() < players:
-		entrants.append(ANIMALS[pick.range_i(ANIMALS.size())])
+		entrants.append(CHARACTERS[pick.range_i(CHARACTERS.size())])
 	m.sim = HideSim.new(seed_value, entrants)
 	m._name_bots(pick)
 	return m
 
 
-static func create_online(seed_value: int, animals: Array, players := 6, level := "normal") -> HideMatch:
+static func create_online(seed_value: int, chars: Array, players := 6, level := "normal") -> HideMatch:
 	var m := HideMatch.new()
 	m.bot_level = level
 	m._bot_cfg = HideBrain.level_config(level)
 	var pick := SimRng.new(seed_value ^ 0x5BD1E995)
-	var entrants: Array = animals.duplicate()
+	var entrants: Array = chars.duplicate()
 	while entrants.size() < players:
-		entrants.append(ANIMALS[pick.range_i(ANIMALS.size())])
+		entrants.append(CHARACTERS[pick.range_i(CHARACTERS.size())])
 	m.sim = HideSim.new(seed_value, entrants)
-	for i in animals.size():
+	for i in chars.size():
 		m.humans.append(i)
 	m._name_bots(pick)
 	return m
@@ -95,8 +95,8 @@ func finished() -> bool:
 	return sim.finished == 1
 
 
-## {mode, place, points, animal, seed, players, kos} (kos = 0: the pearl bookkeeping of Getij reads it).
+## {mode, place, points, character, seed, players}.
 func human_result() -> Dictionary:
 	var row: Dictionary = sim.result()[human]
-	return {"mode": "hide", "place": int(row.place), "points": int(row.points), "kos": 0, "animal": str(row.animal),
-		"seed": sim.seed_value, "players": sim.ents.size(), "survived_s": sim.tick / 30}
+	return {"mode": "hide", "place": int(row.place), "points": int(row.points), "character": str(row.character),
+		"seed": sim.seed_value, "players": sim.ents.size()}

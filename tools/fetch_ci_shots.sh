@@ -19,9 +19,9 @@ fi
 # overview of all runs, newest first
 {
   echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
-  echo '<title>Getij screenshots</title><style>body{margin:0;padding:16px;font-family:system-ui,sans-serif;background:#f4f6f8;color:#1d2a36}'
+  echo '<title>White Lie screenshots</title><style>body{margin:0;padding:16px;font-family:system-ui,sans-serif;background:#f4f6f8;color:#1d2a36}'
   echo 'a{color:#1F6F9F}li{margin:6px 0}@media (prefers-color-scheme:dark){body{background:#0f1720;color:#e6edf3}a{color:#5FD3C9}}</style></head><body>'
-  echo '<h1>Getij screenshots per CI run</h1><ul>'
+  echo '<h1>White Lie screenshots per CI run</h1><ul>'
   for d in $(ls -1 "$dest" | grep -E '^[0-9]{4}-' | sort -r); do
     n=$(ls -1 "$dest/$d" | grep -c '\.png$' || true)
     echo "<li><a href=\"$d/index.html\">$d</a> — $n screens</li>"
