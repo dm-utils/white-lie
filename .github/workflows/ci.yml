@@ -182,7 +182,7 @@ jobs:
           path: build/shots
           retention-days: 7
       - name: Play version for GitHub Pages (develop only; play.<game>.steefbeest.nl)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
         with:
           path: build/web
@@ -192,7 +192,7 @@ jobs:
   # the 38 MB engine is too big for Workers static assets)
   pages:
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     permissions:
       pages: write
