@@ -132,11 +132,19 @@ jobs:
         run: mkdir -p build/shots && python3 -I tools/contact_sheet.py build/shots "White Lie — ${GITHUB_REF_NAME}"
 
       - name: Android debug build
+        env:
+          ANDROID_DEBUG_KEYSTORE_B64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_B64 }}
         run: |
           sudo update-alternatives --set java /usr/lib/jvm/temurin-17-jdk-amd64/bin/java || true
           export JAVA_HOME=${JAVA_HOME_17_X64}
-          keytool -genkeypair -v -keystore "$RUNNER_TEMP/debug.keystore" -storepass android -alias androiddebugkey \
-            -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" >/dev/null 2>&1
+          # one fixed test key (secret ANDROID_DEBUG_KEYSTORE_B64) so a new build installs over the old one;
+          # without it a throwaway key per run (then uninstall the old app first)
+          if [ -n "$ANDROID_DEBUG_KEYSTORE_B64" ]; then
+            printf '%s' "$ANDROID_DEBUG_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/debug.keystore"
+          else
+            keytool -genkeypair -v -keystore "$RUNNER_TEMP/debug.keystore" -storepass android -alias androiddebugkey \
+              -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" >/dev/null 2>&1
+          fi
           mkdir -p ~/.config/godot
           for f in editor_settings-4.tres "editor_settings-${GODOT_VERSION%.*}.tres"; do
             printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\n' \
@@ -181,6 +189,9 @@ jobs:
           name: smoke-shots
           path: build/shots
           retention-days: 7
+      - name: Android test app next to the play version (play.<game>.steefbeest.nl/android.apk)
+        if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
+        run: cp build/android/*.apk build/web/android.apk
       - name: Play version for GitHub Pages (develop only; play.<game>.steefbeest.nl)
         if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
