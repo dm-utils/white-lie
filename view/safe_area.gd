@@ -12,8 +12,11 @@ static func insets(viewport_size: Vector2) -> Dictionary:
 	var win := Vector2(DisplayServer.window_get_size())
 	if win.x <= 0 or win.y <= 0:
 		return {"left": 0.0, "top": 0.0, "right": 0.0, "bottom": 0.0}
-	var safe := DisplayServer.get_display_safe_area()
-	return from_rects(Rect2(safe), win, viewport_size)
+	# the safe area comes in desktop coordinates (a second monitor can start at x = 5760): make it window-relative
+	var safe := Rect2(DisplayServer.get_display_safe_area())
+	if not OS.has_feature("web"):
+		safe.position -= Vector2(DisplayServer.window_get_position())
+	return from_rects(safe, win, viewport_size)
 
 
 ## The safe rect (screen px) inside a window of win px, as insets in viewport units (pure, tested).
